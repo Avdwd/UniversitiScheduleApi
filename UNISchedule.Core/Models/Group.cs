@@ -14,7 +14,7 @@ namespace UNISchedule.Core.Models
         public Guid Id { get; }
         public string Name { get; } = string.Empty;
         
-        public Institute Institute { get; }
+        public  Institute Institute { get; }
         public static (Group group, string error) Create(Guid id, string name, Institute institute)
         {
             var error = string.Empty;

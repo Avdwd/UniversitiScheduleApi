@@ -20,7 +20,7 @@ namespace UNISchedule.Core.Models
         //тут прописати викладача - доступ до класу викладача
         public TypeSubject TypeSubject { get; }
 
-        public(SubjectAssignment subjectAssignment,string error)Create(Guid id, ScheduleRecord scheduleRecord, Group group, Subject subject, TypeSubject typeSubject)
+        public static(SubjectAssignment subjectAssignment,string error)Create(Guid id, ScheduleRecord scheduleRecord, Group group, Subject subject, TypeSubject typeSubject)
         {
             var error = string.Empty;
             // перевірка на null

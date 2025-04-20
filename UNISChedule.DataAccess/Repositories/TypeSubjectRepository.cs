@@ -1,41 +1,57 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using UNISchedule.Core.Interfaces;
+using UNISchedule.Core.Models;
 using UNISchedule.DataAccess.Entities;
 
 namespace UNISchedule.DataAccess.Repositories
 {
-    public class TypeSubjectRepository
+    public class TypeSubjectRepository : ITypeSubjectRepository
     {
         private readonly UniScheduleDbContext _context;
         public TypeSubjectRepository(UniScheduleDbContext context)
         {
             _context = context;
         }
-        public async Task<IEnumerable<TypeSubjectEntity>> GetAllTypeSubjectsAsync()
+
+        public async Task<IEnumerable<TypeSubject>> Get()
         {
-            return await _context.TypeSubjectEntities.ToListAsync();
+            var typeSubjectEntities = await _context.TypeSubjectEntities
+                .AsNoTracking()
+                .ToListAsync();
+
+            var typeSubjects = typeSubjectEntities
+                .Select(ts => TypeSubject.Create(ts.Id, ts.Type).typeSubject)
+                .ToList();
+            return typeSubjects;
         }
-        public async Task<TypeSubjectEntity> GetTypeSubjectByIdAsync(Guid id)
+
+        public async Task<Guid> Create(TypeSubject typeSubject)
         {
-            return await _context.TypeSubjectEntities.FindAsync(id);
-        }
-        public async Task AddTypeSubjectAsync(TypeSubjectEntity typeSubject)
-        {
-            await _context.TypeSubjectEntities.AddAsync(typeSubject);
-            await _context.SaveChangesAsync();
-        }
-        public async Task UpdateTypeSubjectAsync(TypeSubjectEntity typeSubject)
-        {
-            _context.TypeSubjectEntities.Update(typeSubject);
-            await _context.SaveChangesAsync();
-        }
-        public async Task DeleteTypeSubjectAsync(Guid id)
-        {
-            var typeSubject = await GetTypeSubjectByIdAsync(id);
-            if (typeSubject != null)
+            var typeSubjectEntity = new TypeSubjectEntity
             {
-                _context.TypeSubjectEntities.Remove(typeSubject);
-                await _context.SaveChangesAsync();
-            }
+                Id = typeSubject.Id,
+                Type = typeSubject.Type
+            };
+            await _context.TypeSubjectEntities.AddAsync(typeSubjectEntity);
+            await _context.SaveChangesAsync();
+            return typeSubjectEntity.Id;
+        }
+
+        public async Task<Guid> Update(Guid id, string type)
+        {
+            await _context.TypeSubjectEntities
+                .Where(ts => ts.Id == id)
+                .ExecuteUpdateAsync(ts => ts
+                    .SetProperty(ts => ts.Type, ts => type));
+            return id;
+        }
+
+        public async Task<Guid> Delete(Guid id)
+        {
+            await _context.TypeSubjectEntities
+                .Where(ts => ts.Id == id)
+                .ExecuteDeleteAsync();
+            return id;
         }
     }
 }

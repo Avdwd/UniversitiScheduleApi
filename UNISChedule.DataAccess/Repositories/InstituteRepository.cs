@@ -1,41 +1,56 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using UNISchedule.Core.Interfaces;
+using UNISchedule.Core.Models;
 using UNISchedule.DataAccess.Entities;
 
 namespace UNISchedule.DataAccess.Repositories
 {
-    public class InstituteRepository
+    public class InstituteRepository : IInstituteRepository
     {
         private readonly UniScheduleDbContext _context;
         public InstituteRepository(UniScheduleDbContext context)
         {
             _context = context;
         }
-        public async Task<IEnumerable<InstituteEntity>> GetAllInstitutesAsync()
+
+        public async Task<IEnumerable<Institute>> Get()
         {
-            return await _context.InstituteEntities.ToListAsync();
+            var instituteEntities = await _context.InstituteEntities
+                .AsNoTracking()
+                .ToListAsync();
+            var institutes = instituteEntities
+                .Select(i => Institute.Create(i.Id, i.Name).institute)
+                .ToList();
+            return institutes;
         }
-        public async Task<InstituteEntity> GetInstituteByIdAsync(Guid id)
+
+        public async Task<Guid> Create(Institute institute)
         {
-            return await _context.InstituteEntities.FindAsync(id);
-        }
-        public async Task AddInstituteAsync(InstituteEntity institute)
-        {
-            await _context.InstituteEntities.AddAsync(institute);
-            await _context.SaveChangesAsync();
-        }
-        public async Task UpdateInstituteAsync(InstituteEntity institute)
-        {
-            _context.InstituteEntities.Update(institute);
-            await _context.SaveChangesAsync();
-        }
-        public async Task DeleteInstituteAsync(Guid id)
-        {
-            var institute = await GetInstituteByIdAsync(id);
-            if (institute != null)
+            var instituteEntity = new InstituteEntity
             {
-                _context.InstituteEntities.Remove(institute);
-                await _context.SaveChangesAsync();
-            }
+                Id = institute.Id,
+                Name = institute.Name
+            };
+            await _context.InstituteEntities.AddAsync(instituteEntity);
+            await _context.SaveChangesAsync();
+            return instituteEntity.Id;
+        }
+
+        public async Task<Guid> Update(Guid id, string name)
+        {
+            await _context.InstituteEntities
+                .Where(i => i.Id == id)
+                .ExecuteUpdateAsync(i => i
+                    .SetProperty(i => i.Name, i => name));
+            return id;
+        }
+
+        public async Task<Guid> Delete(Guid id)
+        {
+            await _context.InstituteEntities
+                .Where(i => i.Id == id)
+                .ExecuteDeleteAsync();
+            return id;
         }
     }
 }
