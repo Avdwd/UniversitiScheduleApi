@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.13.35806.99
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversitiScheduleApi", "UniversitiScheduleApi.csproj", "{EDACB07E-159C-4CA7-978F-16C6D07D17C0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7E471B3B-B813-4E48-8434-1ADBB3831996} = {7E471B3B-B813-4E48-8434-1ADBB3831996}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UNISchedule.Core", "..\UNISchedule.Core\UNISchedule.Core.csproj", "{7E471B3B-B813-4E48-8434-1ADBB3831996}"
 EndProject
@@ -12,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UNISchedule.DataAccess", ".
 		{7E471B3B-B813-4E48-8434-1ADBB3831996} = {7E471B3B-B813-4E48-8434-1ADBB3831996}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniSchedule.Applications", "..\UniSchedule.Applications\UniSchedule.Applications.csproj", "{6E5CD5D6-C55E-472A-A0AF-DDE8E70F6419}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UNISchedule.Applications", "..\UniSchedule.Applications\UNISchedule.Applications.csproj", "{6E5CD5D6-C55E-472A-A0AF-DDE8E70F6419}"
 	ProjectSection(ProjectDependencies) = postProject
 		{7E471B3B-B813-4E48-8434-1ADBB3831996} = {7E471B3B-B813-4E48-8434-1ADBB3831996}
 	EndProjectSection

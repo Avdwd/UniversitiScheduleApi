@@ -96,15 +96,20 @@ namespace UNISchedule.DataAccess.Repositories
             return id;
         }
 
-        public async Task Delete(Guid id)
+        public async Task<Guid> Delete(Guid id)
         {
-            var subjectAssignmentEntity = await _context.SubjectAssignmentEntities
-                .FirstOrDefaultAsync(s => s.Id == id);
-            if (subjectAssignmentEntity != null)
-            {
-                _context.SubjectAssignmentEntities.Remove(subjectAssignmentEntity);
-                await _context.SaveChangesAsync();
-            }
+            //var subjectAssignmentEntity = await _context.SubjectAssignmentEntities
+            //    .FirstOrDefaultAsync(s => s.Id == id);
+            //if (subjectAssignmentEntity != null)
+            //{
+            //    _context.SubjectAssignmentEntities.Remove(subjectAssignmentEntity);
+            //    await _context.SaveChangesAsync();
+            //}
+
+            await _context.SubjectAssignmentEntities
+                .Where(s => s.Id == id)
+                .ExecuteDeleteAsync();
+            return id;
         }
     }
 }

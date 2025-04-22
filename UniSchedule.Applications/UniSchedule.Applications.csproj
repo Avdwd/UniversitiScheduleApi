@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\UNISchedule.Core\UNISchedule.Core.csproj" />
+	</ItemGroup>
+
 </Project>
