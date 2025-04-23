@@ -1,4 +1,5 @@
-﻿using UNISchedule.Core.Interfaces.RepositoryInterfaces;
+﻿using UniSchedule.Core.Interfaces.ServiceInterfaces;
+using UNISchedule.Core.Interfaces.RepositoryInterfaces;
 using UNISchedule.Core.Models;
 
 namespace UNISchedule.Applications.Services
