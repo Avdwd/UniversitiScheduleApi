@@ -27,4 +27,7 @@
     <ProjectReference Include="..\UNISChedule.DataAccess\UNISchedule.DataAccess.csproj" />
   </ItemGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\UNISChedule.Applications\UNISchedule.Applications.csproj" />
+	</ItemGroup>
 </Project>
