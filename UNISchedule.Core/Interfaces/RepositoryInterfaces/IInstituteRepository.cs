@@ -1,6 +1,6 @@
 ﻿using UNISchedule.Core.Models;
 
-namespace UNISchedule.Core.Interfaces
+namespace UNISchedule.Core.Interfaces.RepositoryInterfaces
 {
     public interface IInstituteRepository
     {

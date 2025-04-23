@@ -1,10 +1,9 @@
-﻿
-using UNISchedule.Core.Interfaces;
+﻿using UNISchedule.Core.Interfaces.RepositoryInterfaces;
 using UNISchedule.Core.Models;
 
 namespace UNISchedule.Applications.Services
 {
-    public class InstituteService
+    public class InstituteService : IInstituteService
     {
         private readonly IInstituteRepository _instituteRepository;
         public InstituteService(IInstituteRepository instituteRepository)
@@ -43,6 +42,6 @@ namespace UNISchedule.Applications.Services
             var institutes = await _instituteRepository.Get();
             return institutes.FirstOrDefault(c => c.Name == name);
         }
-        
+
     }
 }

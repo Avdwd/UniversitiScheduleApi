@@ -1,11 +1,9 @@
-﻿
-
-using UNISchedule.Core.Interfaces;
+﻿using UNISchedule.Core.Interfaces.RepositoryInterfaces;
 using UNISchedule.Core.Models;
 
 namespace UNISchedule.Applications.Services
 {
-    public class SubjectAssignmentService
+    public class SubjectAssignmentService : ISubjectAssignmentService
     {
         private readonly ISubjectAssignmentRepository _subjectAssignmentRepository;
         public SubjectAssignmentService(ISubjectAssignmentRepository subjectAssignmentRepository)
@@ -31,7 +29,7 @@ namespace UNISchedule.Applications.Services
         //Method to update a subject assignment
         public async Task<Guid> UpdateSubjectAssignment(Guid id, Guid scheduleRecordId, Guid groupId, Guid subjectId, Guid typeSubjectId)
         {
-            return await _subjectAssignmentRepository.Update(id,scheduleRecordId, groupId, subjectId, typeSubjectId);
+            return await _subjectAssignmentRepository.Update(id, scheduleRecordId, groupId, subjectId, typeSubjectId);
         }
         //Method to get a subject assignment by id
         public async Task<SubjectAssignment> GetSubjectAssignmentById(Guid id)

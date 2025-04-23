@@ -1,11 +1,9 @@
-﻿
-
-using UNISchedule.Core.Interfaces;
+﻿using UNISchedule.Core.Interfaces.RepositoryInterfaces;
 using UNISchedule.Core.Models;
 
 namespace UNISchedule.Applications.Services
 {
-    public class ClassTimeService
+    public class ClassTimeService : IClassTimeService
     {
         private readonly IClassTimeRepository _classTimeRepository;
         public ClassTimeService(IClassTimeRepository classTimeRepository)
@@ -28,9 +26,9 @@ namespace UNISchedule.Applications.Services
             return await _classTimeRepository.Get();
         }
         //Method to update a class time
-        public async Task<Guid> UpdateClassTime(Guid id,string timeFrame )
+        public async Task<Guid> UpdateClassTime(Guid id, string timeFrame)
         {
-            return await _classTimeRepository.Update(id,timeFrame );
+            return await _classTimeRepository.Update(id, timeFrame);
         }
         //Method to get a class time by id
         public async Task<ClassTime> GetClassTimeById(Guid id)

@@ -1,10 +1,9 @@
-﻿
-using UNISchedule.Core.Interfaces;
+﻿using UNISchedule.Core.Interfaces.RepositoryInterfaces;
 using UNISchedule.Core.Models;
 
 namespace UniSchedule.Applications.Services
 {
-    public class ClassroomService
+    public class ClassroomService : IClassroomService
     {
         private readonly IClassroomRepository _classroomRepository;
         public ClassroomService(IClassroomRepository classroomRepository)
@@ -29,14 +28,14 @@ namespace UniSchedule.Applications.Services
         //Method to update a classroom
         public async Task<Guid> UpdateClassroom(Guid id, int number, int building)
         {
-            return await _classroomRepository.Update(id,number, building);
+            return await _classroomRepository.Update(id, number, building);
         }
         //Method to get a classroom by id
         public async Task<Classroom> GetClassroomById(Guid id)
         {
             var classrooms = await _classroomRepository.Get();
             return classrooms.FirstOrDefault(c => c.Id == id);
-            
+
         }
 
         // Method to get a classroom by number
@@ -51,7 +50,7 @@ namespace UniSchedule.Applications.Services
         {
             var classrooms = await _classroomRepository.Get();
             return classrooms.Where(c => c.Building == building);
-            
+
         }
 
         // Method pagination

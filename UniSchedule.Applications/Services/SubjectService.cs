@@ -1,11 +1,9 @@
-﻿
-
-using UNISchedule.Core.Interfaces;
+﻿using UNISchedule.Core.Interfaces.RepositoryInterfaces;
 using UNISchedule.Core.Models;
 
 namespace UNISchedule.Applications.Services
 {
-    public class SubjectService
+    public class SubjectService : ISubjectService
     {
         private readonly ISubjectRepository _subjectRepository;
         public SubjectService(ISubjectRepository subjectRepository)

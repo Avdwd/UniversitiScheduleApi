@@ -1,9 +1,9 @@
-﻿using UNISchedule.Core.Interfaces;
+﻿using UNISchedule.Core.Interfaces.RepositoryInterfaces;
 using UNISchedule.Core.Models;
 
 namespace UNISchedule.Applications.Services
 {
-    public class ScheduleRecordService
+    public class ScheduleRecordService : IScheduleRecordService
     {
         private readonly IScheduleRecordRepository _scheduleRecordRepository;
         public ScheduleRecordService(IScheduleRecordRepository scheduleRecordRepository)

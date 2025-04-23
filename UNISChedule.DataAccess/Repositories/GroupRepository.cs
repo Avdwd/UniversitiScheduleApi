@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using UNISchedule.Core.Interfaces;
+using UNISchedule.Core.Interfaces.RepositoryInterfaces;
 using UNISchedule.Core.Models;
 using UNISchedule.DataAccess.Entities;
 

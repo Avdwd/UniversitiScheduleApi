@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using UNISchedule.DataAccess.Entities;
 using UNISchedule.Core.Models;
-using UNISchedule.Core.Interfaces;
+using UNISchedule.Core.Interfaces.RepositoryInterfaces;
 
 namespace UNISchedule.DataAccess.Repositories
 {

@@ -1,11 +1,9 @@
-﻿
-
-using UNISchedule.Core.Interfaces;
+﻿using UNISchedule.Core.Interfaces.RepositoryInterfaces;
 using UNISchedule.Core.Models;
 
 namespace UNISchedule.Applications.Services
 {
-    public class GroupService
+    public class GroupService : IGroupService
     {
         private readonly IGroupRepository _groupRepository;
         public GroupService(IGroupRepository groupRepository)
