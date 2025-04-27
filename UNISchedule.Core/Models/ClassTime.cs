@@ -19,10 +19,10 @@ namespace UNISchedule.Core.Models
         {
             var error = string.Empty;
 
-            if (IsValidTimeRange(timeframe))
-            {
-                error = "Invalid. Must be digit in format 00:00 - 00:00";
-            }
+            //if (IsValidTimeRange(timeframe))
+            //{
+            //    error = "Invalid. Must be digit in format 00:00 - 00:00"; //цю частину треба допилити 
+            //}
 
             var classTime = new ClassTime(id, timeframe);
 
@@ -31,6 +31,7 @@ namespace UNISchedule.Core.Models
 
 
 
+        //ToDo: виправити перевірку часу 
 
         // Перевірка на правильність часу
         public static bool IsValidTimeRange(string timeRangeString)

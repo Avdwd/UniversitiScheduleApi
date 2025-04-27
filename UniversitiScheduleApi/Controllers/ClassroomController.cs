@@ -55,5 +55,55 @@ namespace UniversitiScheduleApi.Controllers
             var classroomId = await _classroomService.DeleteClassroom(id);
             return Ok(classroomId);
         }
+        
+        [HttpGet("{id:guid}")]
+        public async Task<ActionResult<ClassroomResponse>> GetClassroomById(Guid id)
+        {
+            var classroom = await _classroomService.GetClassroomById(id);
+            if (classroom == null)
+            {
+                return NotFound();
+            }
+            var classroomResponse = new ClassroomResponse(classroom.Id, classroom.Number, classroom.Building);
+            return Ok(classroomResponse);
+        }
+
+        [HttpGet("number/{number:int}")]
+        public async Task<ActionResult<ClassroomResponse>> GetClassroomByNumber(int number)
+        {
+            var classroom = await _classroomService.GetClassroomByNumber(number);
+            if (classroom == null)
+            {
+                return NotFound();
+            }
+            var classroomResponse = new ClassroomResponse(classroom.Id, classroom.Number, classroom.Building);
+            return Ok(classroomResponse);
+        }
+
+        [HttpGet("building/{building:int}")]
+        public async Task<ActionResult<List<ClassroomResponse>>> GetClassroomByBuilding(int building)
+        {
+            var classrooms = await _classroomService.GetClassroomByBuilding(building);
+            if (classrooms == null || !classrooms.Any())
+            {
+                return NotFound();
+            }
+            var classroomResponses = classrooms.Select(c => new ClassroomResponse(c.Id, c.Number, c.Building));
+            return Ok(classroomResponses);
+        }
+
+        [HttpGet("pagination")]
+        public async Task<ActionResult<List<ClassroomResponse>>> GetClassrooms(int pageNumber, int pageSize)
+        {
+            var classrooms = await _classroomService.GetClassrooms(pageNumber, pageSize);
+            if (classrooms == null || !classrooms.Any())
+            {
+                return NotFound();
+            }
+            var classroomResponses = classrooms.Select(c => new ClassroomResponse(c.Id, c.Number, c.Building));
+            return Ok(classroomResponses);
+        }
+
+
     }
 }

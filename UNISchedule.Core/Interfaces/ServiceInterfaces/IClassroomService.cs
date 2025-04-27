@@ -10,7 +10,7 @@ namespace UniSchedule.Core.Interfaces.ServiceInterfaces
         Task<IEnumerable<Classroom>> GetClassroomByBuilding(int building);
         Task<Classroom> GetClassroomById(Guid id);
         Task<Classroom> GetClassroomByNumber(int number);
-        Task<IEnumerable<Classroom>> GetClassrooms(int pageNumber, int pageSize);
+        Task<IEnumerable<Classroom>> GetClassrooms(int pageNumber, int pageSize);//pagination
         Task<Guid> UpdateClassroom(Guid id, int number, int building);
     }
 }

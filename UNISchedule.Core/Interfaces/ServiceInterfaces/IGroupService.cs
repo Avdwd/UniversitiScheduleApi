@@ -7,7 +7,7 @@ namespace UniSchedule.Core.Interfaces.ServiceInterfaces
         Task<Guid> CreateGroup(Group group);
         Task<Guid> DeleteGroup(Guid id);
         Task<IEnumerable<Group>> GetAllGroups();
-        Task<IEnumerable<Group>> GetClassrooms(int pageNumber, int pageSize);
+        Task<IEnumerable<Group>> GetGroups(int pageNumber, int pageSize);
         Task<Group> GetGroupById(Guid id);
         Task<IEnumerable<Group>> GetGroupByInstitute(Institute institute);
         Task<Group> GetGroupByName(string name);

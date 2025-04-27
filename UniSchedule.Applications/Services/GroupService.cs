@@ -51,7 +51,7 @@ namespace UNISchedule.Applications.Services
         }
 
         //Method pagination
-        public async Task<IEnumerable<Group>> GetClassrooms(int pageNumber, int pageSize)
+        public async Task<IEnumerable<Group>> GetGroups(int pageNumber, int pageSize)
         {
             var classrooms = await _groupRepository.Get();
             return classrooms.Skip((pageNumber - 1) * pageSize).Take(pageSize);
