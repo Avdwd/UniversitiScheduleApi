@@ -47,7 +47,7 @@ namespace UNISchedule.Applications.Services
         public async Task<IEnumerable<Group>> GetGroupByInstitute(Institute institute)
         {
             var groups = await _groupRepository.Get();
-            return groups.Where(c => c.Institute == institute);
+            return groups.Where(c => c.Institute.Id == institute.Id);
         }
 
         //Method pagination

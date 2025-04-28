@@ -76,7 +76,18 @@ namespace UniversitiScheduleApi.Controllers
         public async Task<ActionResult<List<GroupResponse>>> GetGroupByInstitute(Institute institute)
         {
             var instituteId = institute;
-            var groups = await _groupService.GetGroupByInstitute(institute);
+            var groups = await _groupService.GetGroupByInstitute(instituteId);
+            if (groups == null || !groups.Any())
+            {
+                return NotFound();
+            }
+            var groupResponses = groups.Select(g => new GroupResponse(g.Id, g.Name, g.Institute));
+            return Ok(groupResponses);
+        }
+        [HttpGet("pagination")]
+        public async Task<ActionResult<List<GroupResponse>>> GetGroups(int pageNumber, int pageSize)
+        {
+            var groups = await _groupService.GetGroups(pageNumber, pageSize);
             if (groups == null || !groups.Any())
             {
                 return NotFound();
