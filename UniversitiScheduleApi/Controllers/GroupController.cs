@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using UniSchedule.Core.Interfaces.ServiceInterfaces;
+using UNISchedule.Applications.Services;
 using UNISchedule.Core.Models;
 using UniversitiScheduleApi.Contracts.Request;
 using UniversitiScheduleApi.Contracts.Response;
@@ -11,9 +12,11 @@ namespace UniversitiScheduleApi.Controllers
     public class GroupController : ControllerBase
     {
         private readonly IGroupService _groupService;
-        public GroupController(IGroupService groupService)
+        private readonly IInstituteService _instituteService;
+        public GroupController(IGroupService groupService, IInstituteService instituteService)
         {
             _groupService = groupService;
+            _instituteService = instituteService;
         }
         [HttpGet]
         public async Task<ActionResult<List<GroupResponse>>> GetAllGroups()
@@ -72,11 +75,11 @@ namespace UniversitiScheduleApi.Controllers
             var groupResponse = new GroupResponse(group.Id, group.Name, group.Institute);
             return Ok(groupResponse);
         }
-        [HttpGet("institute/{institute:institute}")]
-        public async Task<ActionResult<List<GroupResponse>>> GetGroupByInstitute(Institute institute)
+        [HttpGet("ByInstitute/{instituteId:guid}")]
+        public async Task<ActionResult<List<GroupResponse>>> GetGroupByInstitute([FromRoute] Guid instituteId)
         {
-            var instituteId = institute;
-            var groups = await _groupService.GetGroupByInstitute(instituteId);
+            var institute = await _instituteService.GetInstituteById(instituteId);
+            var groups = await _groupService.GetGroupByInstitute(institute);
             if (groups == null || !groups.Any())
             {
                 return NotFound();

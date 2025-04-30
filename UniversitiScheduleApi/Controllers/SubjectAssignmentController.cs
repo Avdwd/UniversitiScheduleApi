@@ -11,9 +11,22 @@ namespace UniversitiScheduleApi.Controllers
     public class SubjectAssignmentController: ControllerBase
     {
         public readonly ISubjectAssignmentService _subjectAssignmentService;
-        public SubjectAssignmentController(ISubjectAssignmentService subjectAssignmentService)
+        public readonly IGroupService _groupService;
+        public readonly IScheduleRecordService _scheduleRecordService;
+        public readonly ISubjectService _subjectService;
+        public readonly ITypeSubjectService _typeSubjectService;
+        public SubjectAssignmentController(
+            ITypeSubjectService typeSubjectService,
+            ISubjectService subjectService,
+            IGroupService groupService, 
+            IScheduleRecordService scheduleRecordService,
+            ISubjectAssignmentService subjectAssignmentService)
         {
+            _groupService = groupService;
+            _scheduleRecordService = scheduleRecordService;
             _subjectAssignmentService = subjectAssignmentService;
+            _subjectService = subjectService;
+            _typeSubjectService = typeSubjectService;
         }
         // GET: /SubjectAssignment
         [HttpGet]
@@ -69,88 +82,148 @@ namespace UniversitiScheduleApi.Controllers
             return Ok(subjectAssignmentResponse);
         }
         // GET: /SubjectAssignment/Group/{group:group}
-        [HttpGet("Group/{group:group}")]
-        public async Task<ActionResult<SubjectAssignmentResponse>> GetSubjectAssignmentByGroup(Group group)
+        [HttpGet("Group/{groupId:guid}")]
+        public async Task<ActionResult<SubjectAssignmentResponse>> GetSubjectAssignmentByGroup(Guid groupId)
         {
+            var group = await _groupService.GetGroupById(groupId);
+            if (group == null)
+            {
+                return NotFound();
+            }
+
             var subjectAssignment = await _subjectAssignmentService.GetSubjectAssignmentByGroup(group);
             if (subjectAssignment == null)
             {
                 return NotFound();
             }
+
             var subjectAssignmentResponse = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject, subjectAssignment.TypeSubject);
             return Ok(subjectAssignmentResponse);
         }
         // GET: /SubjectAssignment/Group/{group:group}/ScheduleRecord/{scheduleRecord:scheduleRecord}
-        [HttpGet("Group/{group:group}/ScheduleRecord/{scheduleRecord:scheduleRecord}")]
-        public async Task<ActionResult<SubjectAssignmentResponse>> GetSubjectAssignmentByGroupAndScheduleRecord(Group group, ScheduleRecord scheduleRecord)
+        [HttpGet("Group/{groupId:guid}/ScheduleRecord/{scheduleRecordId:guid}")]
+        public async Task<ActionResult<SubjectAssignmentResponse>> GetSubjectAssignmentByGroupAndScheduleRecord(
+        [FromRoute] Guid groupId,
+        [FromRoute] Guid scheduleRecordId)
         {
+
+            var group = await _groupService.GetGroupById(groupId);
+            var scheduleRecord = await _scheduleRecordService.GetScheduleRecordById(scheduleRecordId);
+
+            if (group == null || scheduleRecord == null)
+            {
+                return NotFound("Group or ScheduleRecord not found.");
+            }
+
+            
             var subjectAssignment = await _subjectAssignmentService.GetSubjectAssignmentByGroupAndScheduleRecord(group, scheduleRecord);
+
             if (subjectAssignment == null)
             {
                 return NotFound();
             }
+
             var subjectAssignmentResponse = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject, subjectAssignment.TypeSubject);
             return Ok(subjectAssignmentResponse);
         }
         // GET: /SubjectAssignment/Group/{group:group}/Subject/{subject:subject}
-        [HttpGet("Group/{group:group}/Subject/{subject:subject}")]
-        public async Task<ActionResult<SubjectAssignmentResponse>> GetSubjectAssignmentByGroupAndSubject(Group group, Subject subject)
+        [HttpGet("Group/{groupId:guid}/Subject/{subjectId:guid}")]
+        public async Task<ActionResult<SubjectAssignmentResponse>> GetSubjectAssignmentByGroupAndSubject(Guid groupId, Guid subjectId)
         {
+            var group = await _groupService.GetGroupById(groupId);
+            var subject = await _subjectService.GetSubjectById(subjectId); 
+
+            if (group == null || subject == null)
+            {
+                return NotFound("Group or Subject not found.");
+            }
+
             var subjectAssignment = await _subjectAssignmentService.GetSubjectAssignmentByGroupAndSubject(group, subject);
             if (subjectAssignment == null)
             {
                 return NotFound();
             }
-            var subjectAssignmentResponse = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject, subjectAssignment.TypeSubject);
-            return Ok(subjectAssignmentResponse);
+
+            var response = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject, subjectAssignment.TypeSubject);
+            return Ok(response);
         }
         // GET: /SubjectAssignment/Group/{group:group}/TypeSubject/{typeSubject:typeSubject}
-        [HttpGet("Group/{group:group}/TypeSubject/{typeSubject:typeSubject}")]
-        public async Task<ActionResult<SubjectAssignmentResponse>> GetSubjectAssignmentByGroupAndTypeSubject(Group group, TypeSubject typeSubject)
+        [HttpGet("Group/{groupId:guid}/TypeSubject/{typeSubjectId:guid}")]
+        public async Task<ActionResult<SubjectAssignmentResponse>> GetSubjectAssignmentByGroupAndTypeSubject(Guid groupId, Guid typeSubjectId)
         {
+            var group = await _groupService.GetGroupById(groupId);
+            var typeSubject = await _typeSubjectService.GetTypeSubjectById(typeSubjectId);  
+
+            if (group == null || typeSubject == null)
+            {
+                return NotFound("Group or TypeSubject not found.");
+            }
+
             var subjectAssignment = await _subjectAssignmentService.GetSubjectAssignmentByGroupAndTypeSubject(group, typeSubject);
             if (subjectAssignment == null)
             {
                 return NotFound();
             }
-            var subjectAssignmentResponse = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject, subjectAssignment.TypeSubject);
-            return Ok(subjectAssignmentResponse);
+
+            var response = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject, subjectAssignment.TypeSubject);
+            return Ok(response);
         }
         // GET: /SubjectAssignment/ScheduleRecord/{scheduleRecord:scheduleRecord}
-        [HttpGet("ScheduleRecord/{scheduleRecord:scheduleRecord}")]
-        public async Task<ActionResult<SubjectAssignmentResponse>> GetSubjectAssignmentByScheduleRecord(ScheduleRecord scheduleRecord)
+        [HttpGet("ScheduleRecord/{scheduleRecordId:guid}")]
+        public async Task<ActionResult<SubjectAssignmentResponse>> GetSubjectAssignmentByScheduleRecord(Guid scheduleRecordId)
         {
+            var scheduleRecord = await _scheduleRecordService.GetScheduleRecordById(scheduleRecordId);
+            if (scheduleRecord == null)
+            {
+                return NotFound();
+            }
+
             var subjectAssignment = await _subjectAssignmentService.GetSubjectAssignmentByScheduleRecord(scheduleRecord);
             if (subjectAssignment == null)
             {
                 return NotFound();
             }
-            var subjectAssignmentResponse = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject, subjectAssignment.TypeSubject);
-            return Ok(subjectAssignmentResponse);
+
+            var response = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject, subjectAssignment.TypeSubject);
+            return Ok(response);
         }
         // GET: /SubjectAssignment/Subject/{subject:subject}
-        [HttpGet("Subject/{subject:subject}")]
-        public async Task<ActionResult<SubjectAssignmentResponse>> GetSubjectAssignmentBySubject(Subject subject)
+        [HttpGet("Subject/{subjectId:guid}")]
+        public async Task<ActionResult<SubjectAssignmentResponse>> GetSubjectAssignmentBySubject(Guid subjectId)
         {
+            var subject = await _subjectService.GetSubjectById(subjectId); 
+            if (subject == null)
+            {
+                return NotFound();
+            }
+
             var subjectAssignment = await _subjectAssignmentService.GetSubjectAssignmentBySubject(subject);
             if (subjectAssignment == null)
             {
                 return NotFound();
             }
-            var subjectAssignmentResponse = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject, subjectAssignment.TypeSubject);
-            return Ok(subjectAssignmentResponse);
+
+            var response = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject, subjectAssignment.TypeSubject);
+            return Ok(response);
         }
         // GET: /SubjectAssignment/TypeSubject/{typeSubject:typeSubject}
-        [HttpGet("TypeSubject/{typeSubject:typeSubject}")]
-        public async Task<ActionResult<SubjectAssignmentResponse>> GetSubjectAssignmentByTypeSubject(TypeSubject typeSubject)
+        [HttpGet("TypeSubject/{typeSubjectId:guid}")]
+        public async Task<ActionResult<SubjectAssignmentResponse>> GetSubjectAssignmentByTypeSubject(Guid typeSubjectId)
         {
+            var typeSubject = await _typeSubjectService.GetTypeSubjectById(typeSubjectId); 
+            if (typeSubject == null)
+            {
+                return NotFound();
+            }
+
             var subjectAssignment = await _subjectAssignmentService.GetSubjectAssignmentByTypeSubject(typeSubject);
             if (subjectAssignment == null)
             {
                 return NotFound();
             }
-            var subjectAssignmentResponse = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject, subjectAssignment.TypeSubject);
-            return Ok(subjectAssignmentResponse);
+
+            var response = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject, subjectAssignment.TypeSubject);
+            return Ok(response);
         }
         // GET: /SubjectAssignment/Page/{pageNumber:int}/Size/{pageSize:int}
         [HttpGet("Page/{pageNumber:int}/Size/{pageSize:int}")]

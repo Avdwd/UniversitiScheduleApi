@@ -92,15 +92,28 @@ namespace UniversitiScheduleApi.Controllers
             return Ok(response);
         }
         // GET: /ScheduleRecord/date/{date:DateOnly}
-        [HttpGet("date/{date:DateOnly}")]
-        public async Task<ActionResult<ScheduleRecordResponse>> GetScheduleRecordByDate(DateOnly date)
+        [HttpGet("date/{date}")]
+        public async Task<ActionResult<ScheduleRecordResponse>> GetScheduleRecordByDate(string date)
         {
-            var scheduleRecords = await _scheduleRecordService.GetScheduleRecordByDate(date);
+            if (!DateOnly.TryParse(date, out var parsedDate))
+            {
+                return BadRequest("Invalid date format. Expected format: yyyy-MM-dd");
+            }
+
+            var scheduleRecords = await _scheduleRecordService.GetScheduleRecordByDate(parsedDate);
             if (scheduleRecords == null)
             {
                 return NotFound();
             }
-            var response = new ScheduleRecordResponse(scheduleRecords.Id, scheduleRecords.Date, scheduleRecords.AdditionalData, scheduleRecords.ClassTime, scheduleRecords.Classroom);
+
+            var response = new ScheduleRecordResponse(
+                scheduleRecords.Id,
+                scheduleRecords.Date,
+                scheduleRecords.AdditionalData,
+                scheduleRecords.ClassTime,
+                scheduleRecords.Classroom
+            );
+
             return Ok(response);
         }
         // GET: /ScheduleRecord/page/{pageNumber:int}/{pageSize:int}
