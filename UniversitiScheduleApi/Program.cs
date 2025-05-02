@@ -26,6 +26,7 @@ builder.Services.AddScoped<IScheduleRecordRepository, ScheduleRecordRepository>(
 builder.Services.AddScoped<IClassTimeRepository, ClassTimeRepository>();
 builder.Services.AddScoped<IClassroomRepository, ClassroomRepository>();
 builder.Services.AddScoped<IGroupRepository, GroupRepository>();
+builder.Services.AddScoped<IInstituteRepository, InstituteRepository>();
 //services
 builder.Services.AddScoped<ITypeSubjectService, TypeSubjectService>();
 builder.Services.AddScoped<ISubjectService, SubjectService>();
@@ -34,6 +35,7 @@ builder.Services.AddScoped<IScheduleRecordService, ScheduleRecordService>();
 builder.Services.AddScoped<IClassTimeService, ClassTimeService>();
 builder.Services.AddScoped<IClassroomService, ClassroomService>();
 builder.Services.AddScoped<IGroupService, GroupService>();
+builder.Services.AddScoped<IInstituteService, InstituteService>();
 
 
 var app = builder.Build();
