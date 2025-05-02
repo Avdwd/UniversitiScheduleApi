@@ -7,7 +7,7 @@ namespace UNISchedule.DataAccess.Entities
         public Guid Id { get; set; }
         public int Number { get; set; }
         public int Building { get; set; }
-        public ICollection<ScheduleRecordEntity> ScheduleRecordEntities { get; set; }
+        public ICollection<ScheduleRecordEntity> ScheduleRecordEntities { get; set; } = [];
 
     }
 }

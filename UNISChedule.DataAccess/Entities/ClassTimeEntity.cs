@@ -6,7 +6,7 @@ namespace UNISchedule.DataAccess.Entities
     {
         public Guid Id { get; set; }
         public string Timeframe { get; set; } = string.Empty;
-        public ICollection<ScheduleRecordEntity> ScheduleRecordEntities { get; set; }
+        public ICollection<ScheduleRecordEntity> ScheduleRecordEntities { get; set; } = [];
 
     }
 }

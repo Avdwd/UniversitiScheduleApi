@@ -1,11 +1,13 @@
 ﻿
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using UNISchedule.DataAccess.Configurations;
 using UNISchedule.DataAccess.Entities;
+using UNISchedule.DataAccess.Entities.Identity;
 
 namespace UNISchedule.DataAccess
 {
-    public class UniScheduleDbContext : DbContext
+    public class UniScheduleDbContext : IdentityDbContext<ApplicationUser> //DbContext
     {
         public UniScheduleDbContext(DbContextOptions<UniScheduleDbContext> options)
             :base(options)
