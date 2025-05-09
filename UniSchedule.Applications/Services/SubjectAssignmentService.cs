@@ -1,7 +1,7 @@
 ﻿using UniSchedule.Core.Interfaces.ServiceInterfaces;
 using UNISchedule.Core.Interfaces.RepositoryInterfaces;
 using UNISchedule.Core.Models;
-
+//ToDo: дописати сюди викладача 
 namespace UNISchedule.Applications.Services
 {
     public class SubjectAssignmentService : ISubjectAssignmentService

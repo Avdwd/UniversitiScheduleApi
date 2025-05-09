@@ -12,8 +12,10 @@ namespace UNISchedule.DataAccess.Entities
         public GroupEntity GroupEntity { get; set; }
         public Guid SubjectEntityId { get; set; }
         public SubjectEntity SubjectEntity { get; set; }
-        //тут прописати ідшнік для преподаватєля
-        //тут доступ до класу викладача 
+        //ToDo: тут прописати ідшнік для преподаватєля
+        public Guid TeacherProfileEntityId { get; set; }
+        public TeacherProfileEntity TeacherProfileEntity { get; set; } = null!;
+        //ToDo:тут доступ до класу викладача 
         public Guid TypeSubjectEntityID { get; set; }
         public TypeSubjectEntity TypeSubjectEntity { get; set; }
 

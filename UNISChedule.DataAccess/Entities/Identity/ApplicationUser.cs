@@ -16,7 +16,7 @@ namespace UNISchedule.DataAccess.Entities.Identity
         public string FirstName { get; set; } = string.Empty;
         public string Patronymic { get; set; } = string.Empty;
 
-        public ApplicationUser():base() { }
+       
         
     }
 }

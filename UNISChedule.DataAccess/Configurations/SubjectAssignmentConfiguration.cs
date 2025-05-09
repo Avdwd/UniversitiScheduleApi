@@ -38,6 +38,11 @@ namespace UNISchedule.DataAccess.Configurations
                 .WithMany()
                 .HasForeignKey(sa => sa.TypeSubjectEntityID)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(sa => sa.TeacherProfileEntity)
+                .WithMany()
+                .HasForeignKey(sa => sa.TeacherProfileEntityId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

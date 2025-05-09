@@ -4,23 +4,26 @@ namespace UNISchedule.Core.Models
 {
     public class SubjectAssignment
     {
-        private SubjectAssignment(Guid id, ScheduleRecord scheduleRecord, Group group, Subject subject, TypeSubject typeSubject)
+        private SubjectAssignment(Guid id, ScheduleRecord scheduleRecord, Group group, Subject subject, TypeSubject typeSubject, TeacherProfile teacher)
         {
             Id = id;
             ScheduleRecord = scheduleRecord;
             Group = group;
             Subject = subject;
             TypeSubject = typeSubject;
+            Teacher = teacher;
         }
 
         public Guid Id { get; }
         public ScheduleRecord ScheduleRecord { get; }
         public Group Group { get; }
         public Subject Subject { get; }
-        //тут прописати викладача - доступ до класу викладача
+        // Teacher is added
+        public TeacherProfile Teacher { get; }
         public TypeSubject TypeSubject { get; }
 
-        public static(SubjectAssignment subjectAssignment,string error)Create(Guid id, ScheduleRecord scheduleRecord, Group group, Subject subject, TypeSubject typeSubject)
+
+        public static(SubjectAssignment subjectAssignment,string error)Create(Guid id, ScheduleRecord scheduleRecord, Group group, Subject subject, TypeSubject typeSubject, TeacherProfile teacherProfile)
         {
             var error = string.Empty;
             // перевірка на null
@@ -47,8 +50,13 @@ namespace UNISchedule.Core.Models
                 error = "TypeSubject cannot be null.";
                 return (null, error);
             }
+            if(teacherProfile == null)
+            {
+                error = "Teacher cannot be null.";
+                return (null, error);
+            }
 
-            var subjectAssignment = new SubjectAssignment(id, scheduleRecord, group, subject, typeSubject);
+            var subjectAssignment = new SubjectAssignment(id, scheduleRecord, group, subject, typeSubject,teacherProfile);
             return (subjectAssignment, error); 
         }
     }

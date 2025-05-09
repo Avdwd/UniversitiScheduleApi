@@ -7,7 +7,7 @@ using UNISchedule.DataAccess.Entities.Identity;
 
 namespace UNISchedule.DataAccess
 {
-    public class UniScheduleDbContext : IdentityDbContext<ApplicationUser> //DbContext
+    public class UniScheduleDbContext : IdentityDbContext<ApplicationUser> //inherited from DbContext
     {
         public UniScheduleDbContext(DbContextOptions<UniScheduleDbContext> options)
             :base(options)
@@ -23,6 +23,8 @@ namespace UNISchedule.DataAccess
         public DbSet<SubjectAssignmentEntity> SubjectAssignmentEntities { get; set; }
         public DbSet<SubjectEntity> SubjectEntities { get; set; }
         public DbSet<TypeSubjectEntity> TypeSubjectEntities { get; set; }
+        //ToDo:дописати сети для викладача та студента 
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,6 +36,7 @@ namespace UNISchedule.DataAccess
             modelBuilder.ApplyConfiguration(new SubjectAssignmentConfiguration());
             modelBuilder.ApplyConfiguration(new SubjectConfiguration());
             modelBuilder.ApplyConfiguration(new TypeSubjectConfiguration());
+            //ToDo:дописати конфігурації для студента та викладача 
 
             base.OnModelCreating(modelBuilder);
 
