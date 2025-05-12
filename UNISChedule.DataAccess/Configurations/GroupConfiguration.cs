@@ -22,6 +22,11 @@ namespace UNISchedule.DataAccess.Configurations
                 .HasForeignKey(g => g.InstituteEntityId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasMany(g => g.StudentProfiles)
+                .WithOne(sp => sp.Group)
+                .HasForeignKey(sp => sp.GroupId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.
                 HasMany(g => g.SubjectAssignments)
                 .WithOne(sa => sa.GroupEntity)

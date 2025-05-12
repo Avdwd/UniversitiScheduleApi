@@ -8,5 +8,6 @@ namespace UNISchedule.DataAccess.Entities
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public ICollection<GroupEntity> Groups { get; set; } = [];
+        public ICollection<TeacherProfileEntity> TeacherProfiles { get; set; } = [];
     }
 }

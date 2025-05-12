@@ -13,13 +13,23 @@ namespace UNISchedule.DataAccess.Configurations
     {
         public void Configure(EntityTypeBuilder<TeacherProfileEntity> builder)
         {
-            builder.HasKey(tp => tp.Id);
-            builder.Property(tp => tp.FirstName)
-                .IsRequired()
-                .HasMaxLength(50);
-            builder.Property(tp => tp.LastName)
-            
-           
+            builder.HasKey(tp => tp.ApplicationUserId);
+
+            builder.HasOne(tp => tp.ApplicationUser)
+                .WithOne(u => u.TeacherProfile)
+                .HasForeignKey<TeacherProfileEntity>(tp => tp.ApplicationUserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(tp => tp.Institute)
+                .WithMany()
+                .HasForeignKey(tp => tp.InstituteId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasMany(tp => tp.subjectAssignmentEntities)
+                .WithOne(sa => sa.TeacherProfileEntity)
+                .HasForeignKey(sa => sa.TeacherProfileEntityId)
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
     

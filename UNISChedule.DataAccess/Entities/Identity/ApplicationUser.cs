@@ -16,7 +16,9 @@ namespace UNISchedule.DataAccess.Entities.Identity
         public string FirstName { get; set; } = string.Empty;
         public string Patronymic { get; set; } = string.Empty;
 
-       
-        
+        public StudentProfileEntity? StudentProfile { get; set; } = null!;
+        public TeacherProfileEntity? TeacherProfile { get; set; } = null!;
+
+        public ApplicationUser() { }
     }
 }

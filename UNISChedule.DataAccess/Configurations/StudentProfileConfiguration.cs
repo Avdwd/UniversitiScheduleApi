@@ -15,9 +15,10 @@ namespace UNISchedule.DataAccess.Configurations
         {
             builder.HasKey(sp => sp.ApplicationUserId);
             builder.HasOne(sp => sp.ApplicationUser)
-                .WithOne()
+                .WithOne(u => u.StudentProfile)
                 .HasForeignKey<StudentProfileEntity>(sp => sp.ApplicationUserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
             builder.HasOne(sp => sp.Group)
                 .WithMany(g => g.StudentProfiles)
                 .HasForeignKey(sp => sp.GroupId)

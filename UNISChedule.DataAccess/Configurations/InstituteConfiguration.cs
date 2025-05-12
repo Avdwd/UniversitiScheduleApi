@@ -15,6 +15,12 @@ namespace UNISchedule.DataAccess.Configurations
                 .IsRequired()
                 .HasMaxLength(255);
 
+            builder.
+                HasMany(i => i.TeacherProfiles)
+                .WithOne(tp => tp.Institute)
+                .HasForeignKey(tp => tp.InstituteId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder
                 .HasMany(i => i.Groups)
                 .WithOne(g => g.InstituteEntity)

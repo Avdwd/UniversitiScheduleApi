@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using UNISchedule.DataAccess.Configurations;
+using UNISchedule.DataAccess.Configurations.IdentityConfiguration;
 using UNISchedule.DataAccess.Entities;
 using UNISchedule.DataAccess.Entities.Identity;
 
@@ -14,7 +15,7 @@ namespace UNISchedule.DataAccess
         {
             
         }
-
+        // DbSet properties for my entities
         public DbSet<ClassroomEntity> ClassroomEntities { get; set; }
         public DbSet<ClassTimeEntity> ClassTimeEntities { get; set; }
         public DbSet<GroupEntity> GroupEntities { get; set; }
@@ -23,11 +24,16 @@ namespace UNISchedule.DataAccess
         public DbSet<SubjectAssignmentEntity> SubjectAssignmentEntities { get; set; }
         public DbSet<SubjectEntity> SubjectEntities { get; set; }
         public DbSet<TypeSubjectEntity> TypeSubjectEntities { get; set; }
-        //ToDo:дописати сети для викладача та студента 
+        // Identity entities
+        public DbSet<ApplicationUser> ApplicationUserEntities { get; set; } = null!; // Initialize to avoid null reference
+        public DbSet<StudentProfileEntity> StudentProfileEntities { get; set; }
+        public DbSet<TeacherProfileEntity> TeacherProfileEntities { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.ApplyConfiguration(new ClassroomConfiguration());
             modelBuilder.ApplyConfiguration(new ClassTimeConfiguration());
             modelBuilder.ApplyConfiguration(new GroupConfiguration());
@@ -36,9 +42,13 @@ namespace UNISchedule.DataAccess
             modelBuilder.ApplyConfiguration(new SubjectAssignmentConfiguration());
             modelBuilder.ApplyConfiguration(new SubjectConfiguration());
             modelBuilder.ApplyConfiguration(new TypeSubjectConfiguration());
-            //ToDo:дописати конфігурації для студента та викладача 
+            // Apply configurations for Identity entities
+            modelBuilder.ApplyConfiguration(new ApplicationUserConfiguration());
+            modelBuilder.ApplyConfiguration(new StudentProfileConfiguration());
+            modelBuilder.ApplyConfiguration(new TeacherProfileConfiguration());
+            // Apply other configurations here if needed
 
-            base.OnModelCreating(modelBuilder);
+            
 
             //modelBuilder.ApplyConfigurationsFromAssembly(typeof(UniScheduleDbContext).Assembly);
             //// Add any additional configurations here if needed
