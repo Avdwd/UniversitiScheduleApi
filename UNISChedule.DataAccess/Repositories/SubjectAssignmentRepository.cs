@@ -25,6 +25,10 @@ namespace UNISchedule.DataAccess.Repositories
                 .Include(s => s.ScheduleRecordEntitis)
                         .ThenInclude(sr => sr.ClassroomEntity)
                 .Include(s => s.TypeSubjectEntity)
+                .Include(s => s.TeacherProfileEntity)
+                        .ThenInclude(t => t.ApplicationUser)
+                .Include(s => s.TeacherProfileEntity)
+                        .ThenInclude(t => t.Institute)
                 .ToListAsync();
 
             var subjectAssignments = subjectAssignmentEntities.Select(s =>
@@ -62,7 +66,23 @@ namespace UNISchedule.DataAccess.Repositories
                     s.TypeSubjectEntity.Id,
                     s.TypeSubjectEntity.Type).typeSubject;
 
-                return SubjectAssignment.Create(s.Id, scheduleRecord, group, subject, typeSubject).subjectAssignment;
+                var userDetails = UserDetails.Create(
+                    s.TeacherProfileEntity.ApplicationUser.Id,
+                    s.TeacherProfileEntity.ApplicationUser.UserName,
+                    s.TeacherProfileEntity.ApplicationUser.FirstName,
+                    s.TeacherProfileEntity.ApplicationUser.LastName,
+                    s.TeacherProfileEntity.ApplicationUser.Patronymic).userDatails;
+
+                var teacherInstitute = Institute.Create(
+                    s.TeacherProfileEntity.Institute.Id,
+                    s.TeacherProfileEntity.Institute.Name).institute;
+
+                var teacher = TeacherProfile.Create(
+                    s.TeacherProfileEntity.ApplicationUserId,
+                    teacherInstitute,
+                    userDetails).teacher;
+
+                return SubjectAssignment.Create(s.Id, scheduleRecord, group, subject, typeSubject,teacher).subjectAssignment;
 
             });
 
@@ -77,14 +97,15 @@ namespace UNISchedule.DataAccess.Repositories
                 ScheduleRecordEntityId = subjectAssignment.ScheduleRecord.Id,
                 GroupEntityId = subjectAssignment.Group.Id,
                 SubjectEntityId = subjectAssignment.Subject.Id,
-                TypeSubjectEntityID = subjectAssignment.TypeSubject.Id
+                TypeSubjectEntityID = subjectAssignment.TypeSubject.Id,
+                TeacherProfileEntityId = subjectAssignment.Teacher.ApplicationUserId
             };
             await _context.SubjectAssignmentEntities.AddAsync(subjectAssignmentEntity);
             await _context.SaveChangesAsync();
             return subjectAssignmentEntity.Id;
         }
 
-        public async Task<Guid> Update(Guid id, Guid scheduleRecordId, Guid groupId, Guid subjectId, Guid typeSubjectId)
+        public async Task<Guid> Update(Guid id, Guid scheduleRecordId, Guid groupId, Guid subjectId, Guid typeSubjectId, string teacherId)
         {
             await _context.SubjectAssignmentEntities
                 .Where(s => s.Id == id)
@@ -92,20 +113,15 @@ namespace UNISchedule.DataAccess.Repositories
                     .SetProperty(s => s.ScheduleRecordEntityId, sr => scheduleRecordId)
                     .SetProperty(s => s.GroupEntityId, g => groupId)
                     .SetProperty(s => s.SubjectEntityId, su => subjectId)
-                    .SetProperty(s => s.TypeSubjectEntityID, ts => typeSubjectId));
+                    .SetProperty(s => s.TypeSubjectEntityID, ts => typeSubjectId)
+                    .SetProperty(s => s.TeacherProfileEntityId, tp => teacherId)
+                    );
+
             return id;
         }
 
         public async Task<Guid> Delete(Guid id)
         {
-            //var subjectAssignmentEntity = await _context.SubjectAssignmentEntities
-            //    .FirstOrDefaultAsync(s => s.Id == id);
-            //if (subjectAssignmentEntity != null)
-            //{
-            //    _context.SubjectAssignmentEntities.Remove(subjectAssignmentEntity);
-            //    await _context.SaveChangesAsync();
-            //}
-
             await _context.SubjectAssignmentEntities
                 .Where(s => s.Id == id)
                 .ExecuteDeleteAsync();

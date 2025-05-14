@@ -7,6 +7,6 @@ namespace UNISchedule.Core.Interfaces.RepositoryInterfaces
         Task<Guid> Create(SubjectAssignment subjectAssignment);
         Task<Guid> Delete(Guid id);
         Task<IEnumerable<SubjectAssignment>> Get();
-        Task<Guid> Update(Guid id, Guid scheduleRecordId, Guid groupId, Guid subjectId, Guid typeSubjectId);
+        Task<Guid> Update(Guid id, Guid scheduleRecordId, Guid groupId, Guid subjectId, Guid typeSubjectId, string TeacherProfileId);
     }
 }
