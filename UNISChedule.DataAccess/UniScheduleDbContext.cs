@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using UNISchedule.DataAccess.Configurations;
@@ -8,7 +9,7 @@ using UNISchedule.DataAccess.Entities.Identity;
 
 namespace UNISchedule.DataAccess
 {
-    public class UniScheduleDbContext : IdentityDbContext<ApplicationUser> //inherited from DbContext
+    public class UniScheduleDbContext : IdentityDbContext<ApplicationUser, IdentityRole, string> //inherited from DbContext
     {
         public UniScheduleDbContext(DbContextOptions<UniScheduleDbContext> options)
             :base(options)
