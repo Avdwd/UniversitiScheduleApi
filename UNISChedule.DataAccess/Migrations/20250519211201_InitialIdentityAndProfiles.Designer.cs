@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UNISchedule.DataAccess;
 
@@ -11,9 +12,11 @@ using UNISchedule.DataAccess;
 namespace UNISchedule.DataAccess.Migrations
 {
     [DbContext(typeof(UniScheduleDbContext))]
-    partial class UniScheduleDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250519211201_InitialIdentityAndProfiles")]
+    partial class InitialIdentityAndProfiles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

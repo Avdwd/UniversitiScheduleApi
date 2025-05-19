@@ -28,9 +28,9 @@ namespace UNISchedule.Applications.Services
         }
 
         //Method to update a subject assignment
-        public async Task<Guid> UpdateSubjectAssignment(Guid id, Guid scheduleRecordId, Guid groupId, Guid subjectId, Guid typeSubjectId)
+        public async Task<Guid> UpdateSubjectAssignment(Guid id, Guid scheduleRecordId, Guid groupId, Guid subjectId, Guid typeSubjectId,string teacherProfileId)
         {
-            return await _subjectAssignmentRepository.Update(id, scheduleRecordId, groupId, subjectId, typeSubjectId);
+            return await _subjectAssignmentRepository.Update(id, scheduleRecordId, groupId, subjectId, typeSubjectId, teacherProfileId);
         }
         //Method to get a subject assignment by id
         public async Task<SubjectAssignment> GetSubjectAssignmentById(Guid id)
@@ -86,6 +86,18 @@ namespace UNISchedule.Applications.Services
             var subjectAssignments = await _subjectAssignmentRepository.Get();
             return subjectAssignments.FirstOrDefault(c => c.Group == group && c.TypeSubject == typeSubject);
         }
+        //Method to get a subject assingment by group and teacher profile
+        public async Task<SubjectAssignment> GetSubjectAssignmentByGroupAndTeacherProfile(Group group, TeacherProfile teacherProfile)
+        {
+            var subjectAssignments = await _subjectAssignmentRepository.Get();
+            return subjectAssignments.FirstOrDefault(c => c.Group == group && c.Teacher == teacherProfile);
+        }
 
+        //Method to get a subject assignment by teacher profile
+        public async Task<SubjectAssignment> GetSubjectAssignmentByTeacherProfile(TeacherProfile teacherProfile)
+        {
+            var subjectAssignments = await _subjectAssignmentRepository.Get();
+            return subjectAssignments.FirstOrDefault(c => c.Teacher == teacherProfile);
+        }
     }
 }

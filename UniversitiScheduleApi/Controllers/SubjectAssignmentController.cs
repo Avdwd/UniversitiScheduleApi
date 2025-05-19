@@ -33,7 +33,7 @@ namespace UniversitiScheduleApi.Controllers
         public async Task<ActionResult<List<SubjectAssignmentResponse>>> GetAllSubjectAssignments()
         {
             var subjectAssignments = await _subjectAssignmentService.GetAllSubjectAssignments();
-            var subjectAssignmentResponses = subjectAssignments.Select(c => new SubjectAssignmentResponse(c.Id, c.ScheduleRecord, c.Group, c.Subject, c.TypeSubject));
+            var subjectAssignmentResponses = subjectAssignments.Select(c => new SubjectAssignmentResponse(c.Id, c.ScheduleRecord, c.Group, c.Subject,c.Teacher ,c.TypeSubject));
             return Ok(subjectAssignmentResponses);
         }
         // POST: /SubjectAssignment
@@ -45,7 +45,8 @@ namespace UniversitiScheduleApi.Controllers
                 subjectAssignmentRequest.ScheduleRecord,
                 subjectAssignmentRequest.Group,
                 subjectAssignmentRequest.Subject,
-                subjectAssignmentRequest.TypeSubject
+                subjectAssignmentRequest.TypeSubject,
+                subjectAssignmentRequest.TeacherProfile
             );
             if (!string.IsNullOrEmpty(error))
             {
@@ -59,7 +60,7 @@ namespace UniversitiScheduleApi.Controllers
         [HttpPut("{id:guid}")]
         public async Task<ActionResult<Guid>> UpdateSubjectAssignment(Guid id, [FromBody] SubjectAssignmentRequest subjectAssignmentRequest)
         {
-            var subjectAssignmentId = await _subjectAssignmentService.UpdateSubjectAssignment(id, subjectAssignmentRequest.ScheduleRecord.Id, subjectAssignmentRequest.Group.Id, subjectAssignmentRequest.Subject.Id, subjectAssignmentRequest.TypeSubject.Id);
+            var subjectAssignmentId = await _subjectAssignmentService.UpdateSubjectAssignment(id, subjectAssignmentRequest.ScheduleRecord.Id, subjectAssignmentRequest.Group.Id, subjectAssignmentRequest.Subject.Id, subjectAssignmentRequest.TypeSubject.Id,subjectAssignmentRequest.TeacherProfile.UserDetails.Id);
             return Ok(subjectAssignmentId);
         }
         // DELETE: /SubjectAssignment/{id}
@@ -78,7 +79,7 @@ namespace UniversitiScheduleApi.Controllers
             {
                 return NotFound();
             }
-            var subjectAssignmentResponse = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject, subjectAssignment.TypeSubject);
+            var subjectAssignmentResponse = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject,subjectAssignment.Teacher, subjectAssignment.TypeSubject);
             return Ok(subjectAssignmentResponse);
         }
         // GET: /SubjectAssignment/Group/{group:group}
@@ -97,7 +98,7 @@ namespace UniversitiScheduleApi.Controllers
                 return NotFound();
             }
 
-            var subjectAssignmentResponse = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject, subjectAssignment.TypeSubject);
+            var subjectAssignmentResponse = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject,subjectAssignment.Teacher, subjectAssignment.TypeSubject);
             return Ok(subjectAssignmentResponse);
         }
         // GET: /SubjectAssignment/Group/{group:group}/ScheduleRecord/{scheduleRecord:scheduleRecord}
@@ -123,7 +124,7 @@ namespace UniversitiScheduleApi.Controllers
                 return NotFound();
             }
 
-            var subjectAssignmentResponse = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject, subjectAssignment.TypeSubject);
+            var subjectAssignmentResponse = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject,subjectAssignment.Teacher, subjectAssignment.TypeSubject);
             return Ok(subjectAssignmentResponse);
         }
         // GET: /SubjectAssignment/Group/{group:group}/Subject/{subject:subject}
@@ -144,7 +145,7 @@ namespace UniversitiScheduleApi.Controllers
                 return NotFound();
             }
 
-            var response = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject, subjectAssignment.TypeSubject);
+            var response = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject,subjectAssignment.Teacher, subjectAssignment.TypeSubject);
             return Ok(response);
         }
         // GET: /SubjectAssignment/Group/{group:group}/TypeSubject/{typeSubject:typeSubject}
@@ -165,7 +166,7 @@ namespace UniversitiScheduleApi.Controllers
                 return NotFound();
             }
 
-            var response = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject, subjectAssignment.TypeSubject);
+            var response = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject,subjectAssignment.Teacher, subjectAssignment.TypeSubject);
             return Ok(response);
         }
         // GET: /SubjectAssignment/ScheduleRecord/{scheduleRecord:scheduleRecord}
@@ -184,7 +185,7 @@ namespace UniversitiScheduleApi.Controllers
                 return NotFound();
             }
 
-            var response = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject, subjectAssignment.TypeSubject);
+            var response = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject,subjectAssignment.Teacher, subjectAssignment.TypeSubject);
             return Ok(response);
         }
         // GET: /SubjectAssignment/Subject/{subject:subject}
@@ -203,7 +204,7 @@ namespace UniversitiScheduleApi.Controllers
                 return NotFound();
             }
 
-            var response = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject, subjectAssignment.TypeSubject);
+            var response = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject,subjectAssignment.Teacher, subjectAssignment.TypeSubject);
             return Ok(response);
         }
         // GET: /SubjectAssignment/TypeSubject/{typeSubject:typeSubject}
@@ -222,7 +223,7 @@ namespace UniversitiScheduleApi.Controllers
                 return NotFound();
             }
 
-            var response = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject, subjectAssignment.TypeSubject);
+            var response = new SubjectAssignmentResponse(subjectAssignment.Id, subjectAssignment.ScheduleRecord, subjectAssignment.Group, subjectAssignment.Subject,subjectAssignment.Teacher, subjectAssignment.TypeSubject);
             return Ok(response);
         }
         // GET: /SubjectAssignment/Page/{pageNumber:int}/Size/{pageSize:int}
@@ -230,7 +231,7 @@ namespace UniversitiScheduleApi.Controllers
         public async Task<ActionResult<List<SubjectAssignmentResponse>>> GetSubjectAssignments(int pageNumber, int pageSize)
         {
             var subjectAssignments = await _subjectAssignmentService.GetSubjectAssignments(pageNumber, pageSize);
-            var subjectAssignmentResponses = subjectAssignments.Select(c => new SubjectAssignmentResponse(c.Id, c.ScheduleRecord, c.Group, c.Subject, c.TypeSubject));
+            var subjectAssignmentResponses = subjectAssignments.Select(c => new SubjectAssignmentResponse(c.Id, c.ScheduleRecord, c.Group, c.Subject, c.Teacher, c.TypeSubject));
             return Ok(subjectAssignmentResponses);
         }
     }

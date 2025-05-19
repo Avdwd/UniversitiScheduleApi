@@ -7,6 +7,7 @@ namespace UniversitiScheduleApi.Contracts.Request
         Group Group,
         Subject Subject,
         //тут прописати викладача 
+        TeacherProfile TeacherProfile,
         TypeSubject TypeSubject
     );
 

@@ -16,6 +16,6 @@ namespace UniSchedule.Core.Interfaces.ServiceInterfaces
         Task<SubjectAssignment> GetSubjectAssignmentBySubject(Subject subject);
         Task<SubjectAssignment> GetSubjectAssignmentByTypeSubject(TypeSubject typeSubject);
         Task<IEnumerable<SubjectAssignment>> GetSubjectAssignments(int pageNumber, int pageSize);
-        Task<Guid> UpdateSubjectAssignment(Guid id, Guid scheduleRecordId, Guid groupId, Guid subjectId, Guid typeSubjectId);
+        Task<Guid> UpdateSubjectAssignment(Guid id, Guid scheduleRecordId, Guid groupId, Guid subjectId, Guid typeSubjectId,string teacherProfileId);
     }
 }
