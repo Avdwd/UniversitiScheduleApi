@@ -12,6 +12,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\UNISchedule.Core\UNISchedule.Core.csproj" />
+		<ProjectReference Include="..\UNISChedule.DataAccess\UNISchedule.DataAccess.csproj" />
 	</ItemGroup>
 
 </Project>

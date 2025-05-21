@@ -12,3 +12,6 @@ namespace UniSchedule.Core.Interfaces.ServiceInterfaces
         Task<Guid> UpdateInstitute(Guid id, string name);
     }
 }
+
+
+
