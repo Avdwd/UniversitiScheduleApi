@@ -14,13 +14,13 @@ namespace UNISchedule.Applications.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IStudentProfileService _studentProfileService;
-        private readonly IAdminManagmentService _adminManagmentService;
+        private readonly IAdminManagementService _adminManagmentService;
         private readonly ITeacherProfileService _teacherProfileService;
         public AuthenticationService(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IStudentProfileService studentProfileService,
-            IAdminManagmentService adminManagmentService,
+            IAdminManagementService adminManagmentService,
             ITeacherProfileService teacherProfileService)
         {
             _userManager = userManager;

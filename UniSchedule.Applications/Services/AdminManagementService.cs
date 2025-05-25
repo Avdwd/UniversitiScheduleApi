@@ -9,12 +9,12 @@ using UNISchedule.DataAccess.Entities.Identity;
 
 namespace UNISchedule.Applications.Services
 {
-    public class AdminManagmentService : IAdminManagmentService
+    public class AdminManagementService : IAdminManagementService
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AdminManagmentService(
+        public AdminManagementService(
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager)
         {

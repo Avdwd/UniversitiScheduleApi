@@ -2,7 +2,7 @@
 
 namespace UNISchedule.Applications.Services
 {
-    public interface IAdminManagmentService
+    public interface IAdminManagementService
     {
         Task<bool> AddAdminAsync(string email, string password);
         Task<(bool Succeeded, string[] Errors)> AddUserToRoleAsync(string userId, string roleName);
