@@ -6,11 +6,7 @@ namespace UNISchedule.Applications.Services
 {
     public class StudentProfileService : IStudentProfileService
     {
-        // Implement methods for managing student profiles
-        // For example, Create, Update, Delete, GetAll, GetById, etc.
-        // These methods will interact with the StudentProfileRepository to perform CRUD operations
-        // and return the results to the caller.
-        // You can also implement any additional business logic needed for student profiles here.
+        
         private readonly IStudentProfileRepository _studentProfileRepository;
         public StudentProfileService(IStudentProfileRepository studentProfileRepository)
         {

@@ -1,10 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.Data;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
+
 using System.Threading.Tasks;
 using UniSchedule.Core.Interfaces.ServiceInterfaces;
 using UNISchedule.Core.Constants;
