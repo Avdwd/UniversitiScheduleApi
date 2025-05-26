@@ -1,6 +1,6 @@
 ﻿using UNISchedule.Core.Models;
 
-namespace UNISchedule.Applications.Services
+namespace UNISchedule.Core.Interfaces.ServiceInterfaces
 {
     public interface IAdminManagementService
     {
@@ -8,6 +8,7 @@ namespace UNISchedule.Applications.Services
         Task<(bool Succeeded, string[] Errors)> AddUserToRoleAsync(string userId, string roleName);
         Task<(bool Succeeded, string[] Errors, string UserId)> CreateUserAsync(string email, string password, string firstName, string lastName, string patronymic);
         Task<(bool Succeeded, string[] Errors)> DeleteUserAsync(string userId);
+        Task<IEnumerable<string>> GetAllAdminsAsync();
         Task<IEnumerable<RoleDto>> GetAllRolesAsync();
         Task<IEnumerable<UserDto>> GetAllUsersAsync();
         Task<UserDto> GetUserByIdAsync(string userId);

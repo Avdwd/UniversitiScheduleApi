@@ -43,6 +43,11 @@ namespace UNISchedule.Applications.Services
             await _userManager.AddToRoleAsync(user, "Admin");
             return true;
         }
+        public async Task<IEnumerable<string>> GetAllAdminsAsync()
+        {
+            var admins = await _userManager.GetUsersInRoleAsync("Admin");
+            return admins.Select(a => a.Email).ToList();
+        }
 
         public async Task<bool> RemoveAdminAsync(string email)
         {

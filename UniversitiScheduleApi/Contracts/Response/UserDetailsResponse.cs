@@ -1,12 +1,11 @@
 ﻿namespace UniversitiScheduleApi.Contracts.Response
 {
-    public record StudentProfileResponse(
+    public record UserDetailsResponse
+    (
         string Id,
+        string UserName,
         string FirstName,
         string LastName,
-        string MiddleName,
-        Guid InstituteId,
-        Guid GroupId
+        string Patronymic
     );
-    
 }

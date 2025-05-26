@@ -4,6 +4,7 @@ using UniSchedule.Applications.Services;
 using UniSchedule.Core.Interfaces.ServiceInterfaces;
 using UNISchedule.Applications.Services;
 using UNISchedule.Core.Interfaces.RepositoryInterfaces;
+using UNISchedule.Core.Interfaces.ServiceInterfaces;
 using UNISchedule.DataAccess;
 using UNISchedule.DataAccess.Entities.Identity;
 using UNISchedule.DataAccess.Repositories;
@@ -69,6 +70,8 @@ builder.Services.AddScoped<IGroupService, GroupService>();
 builder.Services.AddScoped<IInstituteService, InstituteService>();
 builder.Services.AddScoped<ITeacherProfileService, TeacherProfileService>();
 builder.Services.AddScoped<IStudentProfileService, StudentProfileService>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<IAdminManagementService, AdminManagementService>();
 
 
 var app = builder.Build();

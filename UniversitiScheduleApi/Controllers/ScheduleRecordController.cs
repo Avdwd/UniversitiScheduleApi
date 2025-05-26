@@ -7,7 +7,7 @@ using UniversitiScheduleApi.Contracts.Response;
 namespace UniversitiScheduleApi.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("[controller]")] 
     public class ScheduleRecordController: ControllerBase
     {
         public readonly IScheduleRecordService _scheduleRecordService;

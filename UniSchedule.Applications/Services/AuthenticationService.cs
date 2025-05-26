@@ -11,6 +11,8 @@ namespace UNISchedule.Applications.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
+        //ToDd: rewrite singn in result 
+
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IStudentProfileService _studentProfileService;
@@ -29,17 +31,21 @@ namespace UNISchedule.Applications.Services
             _adminManagmentService = adminManagmentService;
             _teacherProfileService = teacherProfileService;
         }
-
-        public async Task<SignInResult> LoginAsync(string email, string password)
+        public async Task<LoginResultDto> LoginAsync(string email, string password)
         {
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
-                return SignInResult.Failed;
+            var result = await _signInManager.PasswordSignInAsync(email, password, false, lockoutOnFailure: true);
 
-            return await _signInManager.PasswordSignInAsync(user, password, isPersistent: false, lockoutOnFailure: false);
+            return new LoginResultDto(
+                result.Succeeded,
+                result.IsLockedOut,
+                result.IsNotAllowed,
+                result.RequiresTwoFactor
+            );
         }
+
+
         //Method for register student
-        public async Task<IdentityResult> RegisterStudentAsync(string email, string password, string lastName, string firstName, string patronymic, Group group)
+        public async Task<RegisterResultDto> RegisterStudentAsync(string email, string password, string lastName, string firstName, string patronymic, Group group)
         {
             var user = new ApplicationUser
             {
@@ -52,18 +58,22 @@ namespace UNISchedule.Applications.Services
             };
             var result = await _userManager.CreateAsync(user, password);
 
-            if (!result.Succeeded)
-                return result;
-            await _userManager.AddToRoleAsync(user, AppRoles.Student);
+            if (result.Succeeded)
+            {
 
-            var userDatails = UserDetails.Create(user.Id, user.UserName, user.LastName, user.FirstName, user.Patronymic).userDatails;
-            var studentProfile = StudentProfile.Create(user.Id, group, userDatails).student;
-            await _studentProfileService.CreateStudentProfile(studentProfile);
+                await _userManager.AddToRoleAsync(user, AppRoles.Student);
 
-            return result;
+                var userDatails = UserDetails.Create(user.Id, user.UserName, user.LastName, user.FirstName, user.Patronymic).userDatails;
+                var studentProfile = StudentProfile.Create(user.Id, group, userDatails).student;
+                await _studentProfileService.CreateStudentProfile(studentProfile);
+                return new RegisterResultDto(true, null, user.Id);
+            }
+            return new RegisterResultDto(false, result.Errors.Select(e => e.Description));
         }
+
+
         //Method for register teacher
-        public async Task<IdentityResult> RegisterTeacherAsync(string email, string password, string lastName, string firstName, string patronymic, Institute institute)
+        public async Task<RegisterResultDto> RegisterTeacherAsync(string email, string password, string lastName, string firstName, string patronymic, Institute institute)
         {
             var user = new ApplicationUser
             {
@@ -74,13 +84,16 @@ namespace UNISchedule.Applications.Services
                 Patronymic = patronymic,
             };
             var result = await _userManager.CreateAsync(user, password);
-            if (!result.Succeeded)
-                return result;
-            await _userManager.AddToRoleAsync(user, AppRoles.Teacher);
-            var userDatails = UserDetails.Create(user.Id, user.UserName, user.LastName, user.FirstName, user.Patronymic).userDatails;
-            var teacherProfile = TeacherProfile.Create(user.Id, institute, userDatails).teacher;
-            await _teacherProfileService.CreateTeacherProfile(teacherProfile);
-            return result;
+            if (result.Succeeded)
+            {
+
+                await _userManager.AddToRoleAsync(user, AppRoles.Teacher);
+                var userDatails = UserDetails.Create(user.Id, user.UserName, user.LastName, user.FirstName, user.Patronymic).userDatails;
+                var teacherProfile = TeacherProfile.Create(user.Id, institute, userDatails).teacher;
+                await _teacherProfileService.CreateTeacherProfile(teacherProfile);
+                return new RegisterResultDto(true, null, user.Id);
+            }
+            return new RegisterResultDto(false, result.Errors.Select(e => e.Description));
         }
 
         public async Task LogoutAsync()
