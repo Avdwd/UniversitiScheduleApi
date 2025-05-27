@@ -1,4 +1,6 @@
-﻿namespace UniversitiScheduleApi.Contracts.Request
+﻿using System.Text.RegularExpressions;
+
+namespace UniversitiScheduleApi.Contracts.Request
 {
     public record RegisterStudentRequest(
         string FirstName,
@@ -6,7 +8,7 @@
         string Patronymic,
         string Email,
         string Password,
-        string GroupName
+        Group Group
     );
 
 

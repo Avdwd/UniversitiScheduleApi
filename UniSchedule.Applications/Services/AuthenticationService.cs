@@ -11,94 +11,81 @@ namespace UNISchedule.Applications.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
-        //ToDd: rewrite singn in result 
 
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IStudentProfileService _studentProfileService;
-        private readonly IAdminManagementService _adminManagmentService;
-        private readonly ITeacherProfileService _teacherProfileService;
-        public AuthenticationService(
-            UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
-            IStudentProfileService studentProfileService,
-            IAdminManagementService adminManagmentService,
-            ITeacherProfileService teacherProfileService)
+        private readonly RoleManager<IdentityRole> _roleManager; // Якщо ви використовуєте ролі
+
+        public AuthenticationService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _studentProfileService = studentProfileService;
-            _adminManagmentService = adminManagmentService;
-            _teacherProfileService = teacherProfileService;
+            _roleManager = roleManager;
         }
-        public async Task<LoginResultDto> LoginAsync(string email, string password)
-        {
-            var result = await _signInManager.PasswordSignInAsync(email, password, false, lockoutOnFailure: true);
 
-            return new LoginResultDto(
-                result.Succeeded,
-                result.IsLockedOut,
-                result.IsNotAllowed,
-                result.RequiresTwoFactor
+        public async Task<SignInResult> LoginAsync(string email, string password, bool rememberMe = false)
+        {
+            // Це саме те, що робить Identity Login.cshtml.cs
+            var result = await _signInManager.PasswordSignInAsync(email, password, rememberMe, lockoutOnFailure: false);
+            return result; // Повертає результат входу
+        }
+
+        public async Task<IdentityResult> RegisterStudentAsync(string email, string password, string firstName, string lastName, string patronymic, Group group)
+        {
+            var user = new ApplicationUser { UserName = email, Email = email, FirstName = firstName, LastName = lastName, Patronymic = patronymic };
+            var result = await _userManager.CreateAsync(user, password);
+            //Тут треба створити студента 
+            // і призначити його до групи, якщо це потрібно
+            var studentDetails = UserDetails.Create(user.Id, user.UserName, user.LastName, user.FirstName, user.Patronymic).userDatails;
+
+            var studentProfile = StudentProfile.Create(
+                user.Id,
+                group,
+                studentDetails
+                );
+            
+
+            if (result.Succeeded)
+            {
+                // Призначення ролі "Student"
+                if (!await _roleManager.RoleExistsAsync("Student"))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole("Student"));
+                }
+                await _userManager.AddToRoleAsync(user, "Student");
+            }
+            return result;
+        }
+
+        public async Task<IdentityResult> RegisterTeacherAsync(string email, string password, string firstName, string lastName, string patronymic, Institute institute)
+        {
+            var user = new ApplicationUser { UserName = email, Email = email, FirstName = firstName, LastName = lastName, Patronymic = patronymic };
+            var result = await _userManager.CreateAsync(user, password);
+
+            // Тут треба створити профіль викладача
+            var teacherDetails = UserDetails.Create(user.Id, user.UserName, user.LastName, user.FirstName, user.Patronymic).userDatails;
+            var teacherProfile = TeacherProfile.Create(
+                user.Id,
+                institute,
+                teacherDetails
             );
-        }
-
-
-        //Method for register student
-        public async Task<RegisterResultDto> RegisterStudentAsync(string email, string password, string lastName, string firstName, string patronymic, Group group)
-        {
-            var user = new ApplicationUser
-            {
-                UserName = email,
-                Email = email,
-                LastName = lastName,
-                FirstName = firstName,
-                Patronymic = patronymic,
-
-            };
-            var result = await _userManager.CreateAsync(user, password);
 
             if (result.Succeeded)
             {
-
-                await _userManager.AddToRoleAsync(user, AppRoles.Student);
-
-                var userDatails = UserDetails.Create(user.Id, user.UserName, user.LastName, user.FirstName, user.Patronymic).userDatails;
-                var studentProfile = StudentProfile.Create(user.Id, group, userDatails).student;
-                await _studentProfileService.CreateStudentProfile(studentProfile);
-                return new RegisterResultDto(true, null, user.Id);
+                // Призначення ролі "Teacher"
+                if (!await _roleManager.RoleExistsAsync("Teacher"))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole("Teacher"));
+                }
+                await _userManager.AddToRoleAsync(user, "Teacher");
             }
-            return new RegisterResultDto(false, result.Errors.Select(e => e.Description));
-        }
-
-
-        //Method for register teacher
-        public async Task<RegisterResultDto> RegisterTeacherAsync(string email, string password, string lastName, string firstName, string patronymic, Institute institute)
-        {
-            var user = new ApplicationUser
-            {
-                UserName = email,
-                Email = email,
-                LastName = lastName,
-                FirstName = firstName,
-                Patronymic = patronymic,
-            };
-            var result = await _userManager.CreateAsync(user, password);
-            if (result.Succeeded)
-            {
-
-                await _userManager.AddToRoleAsync(user, AppRoles.Teacher);
-                var userDatails = UserDetails.Create(user.Id, user.UserName, user.LastName, user.FirstName, user.Patronymic).userDatails;
-                var teacherProfile = TeacherProfile.Create(user.Id, institute, userDatails).teacher;
-                await _teacherProfileService.CreateTeacherProfile(teacherProfile);
-                return new RegisterResultDto(true, null, user.Id);
-            }
-            return new RegisterResultDto(false, result.Errors.Select(e => e.Description));
+            return result;
         }
 
         public async Task LogoutAsync()
         {
-            await _signInManager.SignOutAsync();
+            // Це те, що робить Identity Logout.cshtml.cs
+            await _signInManager.SignOutAsync(); // Видаляє автентифікаційний файл cookie
         }
     }
 }

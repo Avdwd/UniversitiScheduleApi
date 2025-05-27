@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using UNISchedule.Core.Interfaces.ServiceInterfaces;
+using UNISchedule.Core.Models;
+using UniversitiScheduleApi.Contracts.Request;
+using UniversitiScheduleApi.Contracts.Response;
 
 
 
@@ -45,28 +48,58 @@ namespace UniversitiScheduleApi.Controllers
         }
         // GET: /AdminManagement/Roles
         [HttpGet("Roles")]
-        public async Task<ActionResult<List<RoleDto>>> GetAllRoles()
+        public async Task<ActionResult<List<RoleDtoResponse>>> GetAllRoles()
         {
             var roles = await _adminManagementService.GetAllRolesAsync();
-            return Ok(roles);
+            if (roles == null || !roles.Any())
+            {
+                return NotFound("No roles found.");
+            }
+            // Convert RoleDto to RoleDtoResponse
+            var roleResponses = roles.Select(role => new RoleDtoResponse(
+                role.Id,
+                role.Name
+            ));
+            return Ok(roleResponses);
         }
         // GET: /AdminManagement/Users
         [HttpGet("Users")]
-        public async Task<ActionResult<List<UserDto>>> GetAllUsers()
+        public async Task<ActionResult<List<UserDtoResponse>>> GetAllUsers()
         {
             var users = await _adminManagementService.GetAllUsersAsync();
-            return Ok(users);
+            if (users == null || !users.Any())
+            {
+                return NotFound("No users found.");
+            }
+            // Convert UserDto to UserDtoResponse
+            var userResponses = users.Select(user => new UserDtoResponse(
+                user.Id,
+                user.FirstName,
+                user.LastName,
+                user.Patronymic,
+                user.Email
+   
+            ));
+            return Ok(userResponses);
         }
         // GET: /AdminManagement/Users/{userId}
         [HttpGet("Users/{userId}")]
-        public async Task<ActionResult<UserDto>> GetUserById(string userId)
+        public async Task<ActionResult<UserDtoResponse>> GetUserById(string userId)
         {
             var user = await _adminManagementService.GetUserByIdAsync(userId);
             if (user == null)
             {
                 return NotFound("User not found.");
             }
-            return Ok(user);
+            // Convert UserDto to UserDtoResponse
+            var userResponse = new UserDtoResponse(
+                user.Id,
+                user.FirstName,
+                user.LastName,
+                user.Patronymic,
+                user.Email
+            );
+            return Ok(userResponse);
         }
         // POST: /AdminManagement/Users
         [HttpPost("Users")]
@@ -119,7 +152,7 @@ namespace UniversitiScheduleApi.Controllers
             var (succeeded, errors) = await _adminManagementService.AddUserToRoleAsync(userId, roleName);
             if (succeeded)
             {
-                return Ok();
+                return Ok(userId);
             }
             return BadRequest(errors);
         }
