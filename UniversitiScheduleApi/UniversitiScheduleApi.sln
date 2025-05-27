@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UNISchedule.Applications", 
 		{7E471B3B-B813-4E48-8434-1ADBB3831996} = {7E471B3B-B813-4E48-8434-1ADBB3831996}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversitySchedule.UI", "..\UniversitySchedule.UI\UniversitySchedule.UI.csproj", "{72570C96-D883-4274-98B1-E241FB4F882A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{6E5CD5D6-C55E-472A-A0AF-DDE8E70F6419}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E5CD5D6-C55E-472A-A0AF-DDE8E70F6419}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E5CD5D6-C55E-472A-A0AF-DDE8E70F6419}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72570C96-D883-4274-98B1-E241FB4F882A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72570C96-D883-4274-98B1-E241FB4F882A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72570C96-D883-4274-98B1-E241FB4F882A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72570C96-D883-4274-98B1-E241FB4F882A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
