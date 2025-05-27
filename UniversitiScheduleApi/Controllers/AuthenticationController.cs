@@ -47,9 +47,17 @@ namespace UniversitiScheduleApi.Controllers
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] RegisterStudentRequest registerRequest)
         {
-           var group = Group.Create(registerRequest.Group.Id, registerRequest.InstituteId);
+           var group = Group.Create(registerRequest.Group.Id,registerRequest.Group.Name, registerRequest.Group.Institute);
 
-            var result = await _authenticationService.RegisterStudentAsync(registerRequest.Email, registerRequest.Password, registerRequest.FirstName, registerRequest.LastName, registerRequest.Patronymic,  );
+            var result = await _authenticationService.RegisterStudentAsync(
+                registerRequest.Email, 
+                registerRequest.Password, 
+                registerRequest.FirstName, 
+                registerRequest.LastName, 
+                registerRequest.Patronymic,
+                group.group
+
+                );
             if (result.Succeeded)
             {
                 // Реєстрація успішна. Можна автоматично ввійти користувача, якщо потрібно,
@@ -65,7 +73,15 @@ namespace UniversitiScheduleApi.Controllers
         [HttpPost("Register/Teacher")]
         public async Task<IActionResult> RegisterTeacher([FromBody] RegisterTeacherRequest registerTeacherRequest)
         {
-            var result = await _authenticationService.RegisterTeacherAsync(registerTeacherRequest.Email, registerTeacherRequest.Password, registerTeacherRequest.FirstName, registerTeacherRequest.LastName, registerTeacherRequest.Patronymic, registerTeacherRequest.Institute);
+            var institute = Institute.Create(registerTeacherRequest.Institute.Id,registerTeacherRequest.Institute.Name); 
+            var result = await _authenticationService.RegisterTeacherAsync(
+                registerTeacherRequest.Email, 
+                registerTeacherRequest.Password,
+                registerTeacherRequest.FirstName,
+                registerTeacherRequest.LastName,
+                registerTeacherRequest.Patronymic,
+                institute.institute
+                );
             if (result.Succeeded)
             {
                 return CreatedAtAction(nameof(Login), new { email = registerTeacherRequest.Email }, new { Message = "Registration successful." });

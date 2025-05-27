@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿
+using UNISchedule.Core.Models;
 
 namespace UniversitiScheduleApi.Contracts.Request
 {

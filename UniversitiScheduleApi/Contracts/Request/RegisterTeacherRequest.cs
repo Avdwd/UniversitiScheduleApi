@@ -1,4 +1,6 @@
-﻿namespace UniversitiScheduleApi.Contracts.Request
+﻿using UNISchedule.Core.Models;
+
+namespace UniversitiScheduleApi.Contracts.Request
 {
     public record RegisterTeacherRequest(
         string FirstName,
@@ -6,7 +8,8 @@
         string Patronymic,
         string Email,
         string Password,
-        string TeacherProfileId
+        string TeacherProfileId,
+        Institute Institute
     );
     
 }
