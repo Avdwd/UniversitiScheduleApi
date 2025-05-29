@@ -1,0 +1,146 @@
+﻿@page
+@model UniversitySchedule.UI.Pages.Admin.Institutes.IndexModel
+@{
+    ViewData["Title"] = "Управління Інститутами";
+}
+
+<h2 class="mb-4">Управління Інститутами</h2>
+
+<button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#createInstituteModal">
+    Додати Інститут
+</button>
+
+@if (Model.Institutes != null && Model.Institutes.Any())
+{
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Назва Інституту</th>
+                <th>Дії</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var institute in Model.Institutes)
+            {
+                <tr>
+                    <td>@institute.Id</td>
+                    <td>@institute.Name</td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-info me-2" data-bs-toggle="modal" data-bs-target="#editInstituteModal" data-institute-id="@institute.Id" data-institute-name="@institute.Name">Редагувати</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteInstituteModal" data-institute-id="@institute.Id" data-institute-name="@institute.Name">Видалити</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Інститути відсутні.</p>
+}
+
+<div class="modal fade" id="createInstituteModal" tabindex="-1" aria-labelledby="createInstituteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-page-handler="CreateInstitute">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createInstituteModalLabel">Додати новий Інститут</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="newInstituteName">Назва Інституту</label>
+                        <input type="text" class="form-control" id="newInstituteName" name="newInstituteName" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Відміна</button>
+                    <button type="submit" class="btn btn-primary">Зберегти</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editInstituteModal" tabindex="-1" aria-labelledby="editInstituteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-page-handler="EditInstitute">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editInstituteModalLabel">Редагувати Інститут</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editInstituteId" name="editedInstituteId">
+                    <div class="form-group">
+                        <label for="editInstituteName">Назва Інституту</label>
+                        <input type="text" class="form-control" id="editInstituteName" name="editedInstituteName" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Відміна</button>
+                    <button type="submit" class="btn btn-primary">Зберегти зміни</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteInstituteModal" tabindex="-1" aria-labelledby="deleteInstituteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-page-handler="DeleteInstitute">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteInstituteModalLabel">Видалити Інститут?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="deleteInstituteId" name="deletedInstituteId">
+                    <p>Ви впевнені, що хочете видалити інститут: <strong id="deleteInstituteName"></strong>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Відміна</button>
+                    <button type="submit" class="btn btn-danger">Видалити</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // JS для заповнення модального вікна редагування
+        document.addEventListener('DOMContentLoaded', function () {
+            var editModal = document.getElementById('editInstituteModal');
+            editModal.addEventListener('show.bs.modal', function (event) {
+                // Кнопка, яка викликала модальне вікно
+                var button = event.relatedTarget;
+                // Витягуємо інформацію з атрибутів data-*
+                var instituteId = button.getAttribute('data-institute-id');
+                var instituteName = button.getAttribute('data-institute-name');
+
+                // Оновлюємо вміст модального вікна
+                var modalIdInput = editModal.querySelector('#editInstituteId');
+                var modalNameInput = editModal.querySelector('#editInstituteName');
+
+                modalIdInput.value = instituteId;
+                modalNameInput.value = instituteName;
+            });
+
+            // JS для заповнення модального вікна видалення
+            var deleteModal = document.getElementById('deleteInstituteModal');
+            deleteModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var instituteId = button.getAttribute('data-institute-id');
+                var instituteName = button.getAttribute('data-institute-name');
+
+                var modalIdInput = deleteModal.querySelector('#deleteInstituteId');
+                var modalNameSpan = deleteModal.querySelector('#deleteInstituteName');
+
+                modalIdInput.value = instituteId;
+                modalNameSpan.textContent = instituteName;
+            });
+        });
+    </script>
+}

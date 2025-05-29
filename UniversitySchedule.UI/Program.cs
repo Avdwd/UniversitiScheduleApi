@@ -2,6 +2,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddHttpClient("UniversityApi", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration.GetSection("ApiSettings:BaseUrl").Value!);
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
 
 var app = builder.Build();
 

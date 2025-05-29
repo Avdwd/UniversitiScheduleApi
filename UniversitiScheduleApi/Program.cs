@@ -103,6 +103,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseRouting();//цього не було 
+
 app.UseAuthentication();
 app.UseAuthorization();
 

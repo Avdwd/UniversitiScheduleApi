@@ -1,10 +1,29 @@
 ﻿@page
-@model IndexModel
+
+@model UniversitySchedule.UI.Pages.IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    // Це може бути заголовок сторінки
+    ViewData["Title"] = "Аутентифікація";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow p-4" style="width: 100%; max-width: 400px;">
+        <h2 class="text-center mb-4">Аутентифікація</h2>
+        <form method="post">
+            <div class="form-group mb-3">
+                <label for="Login">Введіть Логін</label>
+                <input type="text" class="form-control" id="Login" asp-for="Input.Login" placeholder="Введіть Логін" required>
+
+                <span asp-validation-for="Input.Login" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-4">
+                <label for="Password">Введіть пароль</label>
+                <input type="password" class="form-control" id="Password" asp-for="Input.Password" placeholder="Введіть пароль" required>
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">Підтвердити</button>
+            </div>
+        </form>
+    </div>
 </div>

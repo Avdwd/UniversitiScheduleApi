@@ -7,7 +7,7 @@ using UniversitiScheduleApi.Contracts.Response;
 namespace UniversitiScheduleApi.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class InstituteController: ControllerBase
     {
         public readonly IInstituteService _instituteService;
