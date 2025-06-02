@@ -1,4 +1,5 @@
 ﻿using UNISchedule.Core.Models;
+using UniversitiScheduleApi.Contracts.Request.RefRequests;
 
 namespace UniversitiScheduleApi.Contracts.Request
 {
@@ -7,6 +8,6 @@ namespace UniversitiScheduleApi.Contracts.Request
         string LastName,
         string MiddleName,
         string UserName,
-        Institute Institute
+        InstituteRefRequest Institute // guid
     );
 }

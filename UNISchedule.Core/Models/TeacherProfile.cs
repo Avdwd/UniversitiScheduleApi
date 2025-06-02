@@ -8,8 +8,9 @@ namespace UNISchedule.Core.Models
 {
     public class TeacherProfile
     {
-        private TeacherProfile(string applicationUserId, Institute institute, UserDetails userDetails)
+        private TeacherProfile(string id, string applicationUserId, Institute institute, UserDetails userDetails)
         {
+            Id = id;
             ApplicationUserId = applicationUserId;
             Institute = institute;
             UserDetails = userDetails;
@@ -17,8 +18,9 @@ namespace UNISchedule.Core.Models
         public UserDetails UserDetails { get; } = null!;
         public string ApplicationUserId { get; } = string.Empty;
         public Institute Institute { get; }
+        public string Id { get; private set; }
 
-        public static(TeacherProfile teacher, string error)Create(string applicationUserId,Institute institute, UserDetails userDetails)
+        public static(TeacherProfile teacher, string error)Create(string id, string applicationUserId,Institute institute, UserDetails userDetails)
         {
             var error = string.Empty;
 
@@ -28,7 +30,7 @@ namespace UNISchedule.Core.Models
                 return (null, error);
             }
 
-            var teacher = new TeacherProfile(applicationUserId, institute, userDetails);
+            var teacher = new TeacherProfile(id, applicationUserId, institute, userDetails);
             return (teacher, error);
         }
 

@@ -1,14 +1,14 @@
 ﻿using UNISchedule.Core.Models;
+using UniversitiScheduleApi.Contracts.Request.RefRequests;
 
 namespace UniversitiScheduleApi.Contracts.Request
 {
     public record SubjectAssignmentRequest(
-        ScheduleRecord ScheduleRecord,
-        Group Group,
-        Subject Subject,
-        //тут прописати викладача 
+        ScheduleRecordRefRequest ScheduleRecord,
+        GroupRefRequest Group,
+        SubjectRefRequest Subject,
         TeacherProfile TeacherProfile,
-        TypeSubject TypeSubject
+        TypeSubjectRefRequest TypeSubject
     );
 
 }

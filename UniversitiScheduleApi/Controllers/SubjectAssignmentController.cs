@@ -15,18 +15,21 @@ namespace UniversitiScheduleApi.Controllers
         public readonly IScheduleRecordService _scheduleRecordService;
         public readonly ISubjectService _subjectService;
         public readonly ITypeSubjectService _typeSubjectService;
+        private readonly ITeacherProfileService _teacherProfileService;
         public SubjectAssignmentController(
             ITypeSubjectService typeSubjectService,
             ISubjectService subjectService,
             IGroupService groupService, 
             IScheduleRecordService scheduleRecordService,
-            ISubjectAssignmentService subjectAssignmentService)
+            ISubjectAssignmentService subjectAssignmentService,
+            ITeacherProfileService teacherProfileService)
         {
             _groupService = groupService;
             _scheduleRecordService = scheduleRecordService;
             _subjectAssignmentService = subjectAssignmentService;
             _subjectService = subjectService;
             _typeSubjectService = typeSubjectService;
+            _teacherProfileService = teacherProfileService;
         }
         // GET: /SubjectAssignment
         [HttpGet]
@@ -40,12 +43,38 @@ namespace UniversitiScheduleApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Guid>> CreateSubjectAssignment([FromBody] SubjectAssignmentRequest subjectAssignmentRequest)
         {
+            if (subjectAssignmentRequest == null)
+            {
+                return BadRequest("Invalid subject assignment data.");
+            }
+            var group = await _groupService.GetGroupById(subjectAssignmentRequest.Group.Id);
+            if (group == null)
+            {
+                return NotFound("Group not found.");
+            }
+            var scheduleRecord = await _scheduleRecordService.GetScheduleRecordById(subjectAssignmentRequest.ScheduleRecord.Id);
+            if (scheduleRecord == null)
+            {
+                return NotFound("ScheduleRecord not found.");
+            }
+            var subject = await _subjectService.GetSubjectById(subjectAssignmentRequest.Subject.Id);
+            if (subject == null)
+            {
+                return NotFound("Subject not found.");
+            }
+            var typeSubject = await _typeSubjectService.GetTypeSubjectById(subjectAssignmentRequest.TypeSubject.Id);
+            if (typeSubject == null)
+            {
+                return NotFound("TypeSubject not  found.");
+            }
+            
+
             var (subjectAssignment, error) = SubjectAssignment.Create(
                 Guid.NewGuid(),
-                subjectAssignmentRequest.ScheduleRecord,
-                subjectAssignmentRequest.Group,
-                subjectAssignmentRequest.Subject,
-                subjectAssignmentRequest.TypeSubject,
+                scheduleRecord,
+                group,
+                subject,
+                typeSubject,
                 subjectAssignmentRequest.TeacherProfile
             );
             if (!string.IsNullOrEmpty(error))

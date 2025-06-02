@@ -29,11 +29,12 @@ namespace UNISchedule.DataAccess.Repositories
             var studentProfiles = studentProfileEntities
                 .Select(s =>
                 {
+                    var id = s.Id;
                     var applicationUserId = s.ApplicationUser.Id;
                     var details = UserDetails.Create(s.ApplicationUser.Id, s.ApplicationUser.UserName, s.ApplicationUser.FirstName, s.ApplicationUser.LastName, s.ApplicationUser.Patronymic).userDatails;
                     var institute = Institute.Create(s.Group.InstituteEntity.Id, s.Group.InstituteEntity.Name).institute;
                     var group = Group.Create(s.Group.Id, s.Group.Name, institute).group;
-                    return StudentProfile.Create(applicationUserId, group, details).student;
+                    return StudentProfile.Create(id, applicationUserId, group, details).student;
                 })
                 .ToList();
             return studentProfiles;

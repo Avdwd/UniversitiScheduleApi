@@ -1,4 +1,5 @@
 ﻿using UNISchedule.Core.Models;
+using UniversitiScheduleApi.Contracts.Request.RefRequests;
 
 namespace UniversitiScheduleApi.Contracts.Request
 {
@@ -9,7 +10,7 @@ namespace UniversitiScheduleApi.Contracts.Request
         string Email,
         string Password,
         string TeacherProfileId,
-        Institute Institute
+        InstituteRefRequest Institute
     );
     
 }

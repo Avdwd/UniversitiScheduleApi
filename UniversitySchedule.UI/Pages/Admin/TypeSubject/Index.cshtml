@@ -1,0 +1,101 @@
+﻿@page
+@model UniversitySchedule.UI.Pages.Admin.TypeSubject.IndexModel
+
+@{
+    ViewData["Title"] = "Типи Предметів";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<hr/>
+
+<h2>Створити новий тип предмету</h2>
+<form method="post" asp-page-handler="Create">
+    <div class="form-group">
+        <label for="newTypeSubjectType">Назва типу:</label>
+        <input type="text" class="form-control" id="newTypeSubjectType" asp-for="NewTypeSubject.Type" required />
+        @* Видаляємо name="Type", оскільки asp-for з BindProperty зробить це автоматично *@
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Створити</button>
+</form>
+<hr/>
+
+<h2>Список типів предметів</h2>
+
+@if (Model.TypeSubjects == null || !Model.TypeSubjects.Any())
+{
+    <p>Немає доступних типів предметів.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Назва</th>
+            <th>Дії</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.TypeSubjects)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Type</td>
+                <td>
+                    <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#editModal"
+                            data-id="@item.Id" data-type="@item.Type">Редагувати
+                    </button>
+                    <form method="post" asp-page-handler="Delete" style="display:inline;"
+                          onsubmit="return confirm('Ви впевнені, що хочете видалити цей тип предмету?');">
+                        <input type="hidden" name="IdToDelete" value="@item.Id"/>
+                        <button type="submit" class="btn btn-danger btn-sm">Видалити</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-page-handler="Update">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Редагувати тип предмету</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editTypeSubjectId" name="IdToUpdate"/>
+                    <div class="form-group">
+                        <label for="editTypeSubjectType">Назва типу:</label>
+                        <input type="text" class="form-control" id="editTypeSubjectType" name="Type" required/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
+                    <button type="submit" class="btn btn-primary">Зберегти зміни</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var editModal = document.getElementById('editModal');
+        editModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var id = button.getAttribute('data-id');
+            var type = button.getAttribute('data-type');
+
+            var modalIdInput = editModal.querySelector('#editTypeSubjectId');
+            var modalTypeInput = editModal.querySelector('#editTypeSubjectType');
+
+            modalIdInput.value = id;
+            modalTypeInput.value = type;
+        });
+    </script>
+}

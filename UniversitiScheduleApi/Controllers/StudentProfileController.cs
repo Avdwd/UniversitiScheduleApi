@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using UniSchedule.Core.Interfaces.ServiceInterfaces;
 using UNISchedule.Core.Models;
 using UNISchedule.DataAccess.Entities.Identity;
@@ -12,9 +14,13 @@ namespace UniversitiScheduleApi.Controllers
     public class StudentProfileController : ControllerBase
     {
         public readonly IStudentProfileService _studentProfileService;
-        public StudentProfileController(IStudentProfileService studentProfileService)
+        private readonly IGroupService _groupService;
+        private readonly UserManager<ApplicationUser> _userManager;
+        public StudentProfileController(IStudentProfileService studentProfileService, IGroupService groupService, UserManager<ApplicationUser> userManager)
         {
             _studentProfileService = studentProfileService;
+            _groupService = groupService;
+            _userManager = userManager;
         }
 
         // GET: /StudentProfile/{studentId}
@@ -64,12 +70,42 @@ namespace UniversitiScheduleApi.Controllers
             {
                 return BadRequest("Invalid student profile data.");
             }
-            var applicationUserId = new ApplicationUser();
-            var (profile, error) = StudentProfile.Create(
+            var group = await _groupService.GetGroupById(studentProfile.Group.Id);
 
-                applicationUserId.Id,
-                studentProfile.Group,
-                UserDetails.Create(applicationUserId.Id, studentProfile.UserName, studentProfile.FirstName, studentProfile.LastName, studentProfile.MiddleName ).userDatails
+            ApplicationUser userToLink;
+            var existingUser = await _userManager.FindByNameAsync(studentProfile.UserName);
+            if (existingUser == null)
+            {
+                // Якщо користувача не існує, створюємо нового користувача Identity
+                var newUser = new ApplicationUser
+                {
+                    UserName = studentProfile.UserName,
+                    Email = studentProfile.UserName + "@university.com" // Можливо, вам потрібно додати поле Email до TeacherProfileRequest
+                };
+
+                // !!! ВАЖЛИВО: Для реального використання пароль не має бути фіксованим рядком!
+                // Він має надходити з запиту клієнта або генеруватися безпечним способом.
+                // Наприклад, ви можете додати поле "Password" до TeacherProfileRequest.
+                var createResult = await _userManager.CreateAsync(newUser, "SecureP@ssword123!"); // ЗМІНІТЬ ЦЕ!
+
+                if (!createResult.Succeeded)
+                {
+                    // Повертаємо помилки, якщо створення користувача Identity не вдалося
+                    return BadRequest($"Failed to create Identity user: {string.Join(", ", createResult.Errors.Select(e => e.Description))}");
+                }
+                userToLink = newUser; // Використовуємо щойно створеного користувача
+            }
+            else
+            {
+                userToLink = existingUser; // Використовуємо існуючого користувача
+            }
+            var newStudentProfileId = Guid.NewGuid().ToString();
+
+            var (profile, error) = StudentProfile.Create(
+                newStudentProfileId,
+                userToLink.Id,
+                group,
+                UserDetails.Create(userToLink.Id, studentProfile.UserName, studentProfile.FirstName, studentProfile.LastName, studentProfile.MiddleName ).userDatails
             );
             var studentProfileId = await _studentProfileService.CreateStudentProfile(profile);
             return Ok(studentProfileId);

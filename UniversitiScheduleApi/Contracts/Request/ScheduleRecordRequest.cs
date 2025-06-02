@@ -1,4 +1,5 @@
 ﻿using UNISchedule.Core.Models;
+using UniversitiScheduleApi.Contracts.Request.RefRequests;
 
 namespace UniversitiScheduleApi.Contracts.Request
 {
@@ -6,7 +7,7 @@ namespace UniversitiScheduleApi.Contracts.Request
     (
         DateOnly Date,
         string AdditionalData,
-        ClassTime ClassTime,
-        Classroom Classroom 
+        ClassTimeRefRequest ClassTime,
+        ClassroomRefRequest Classroom 
     );
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity; // Додайте це для SignInResult, IdentityResult
 using Microsoft.AspNetCore.Identity.Data; // Може бути використано для LoginRequest/RegisterRequest, якщо це з Identity
 using Microsoft.AspNetCore.Mvc;
+using UniSchedule.Core.Interfaces.ServiceInterfaces;
 using UNISchedule.Core.Interfaces.ServiceInterfaces;
 using UNISchedule.Core.Models;
 using UniversitiScheduleApi.Contracts.Request;
@@ -12,10 +13,15 @@ namespace UniversitiScheduleApi.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly IAuthenticationService _authenticationService;
+        private readonly IGroupService _groupService;
+        private readonly IInstituteService _instituteService;
 
-        public AuthenticationController(IAuthenticationService authenticationService)
+        public AuthenticationController(IAuthenticationService authenticationService,IGroupService groupService, IInstituteService instituteService)
         {
             _authenticationService = authenticationService;
+            _groupService = groupService;
+            _instituteService = instituteService;
+
         }
 
         // POST: /Authentication/Login
@@ -47,16 +53,16 @@ namespace UniversitiScheduleApi.Controllers
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] RegisterStudentRequest registerRequest)
         {
-           var group = Group.Create(registerRequest.Group.Id,registerRequest.Group.Name, registerRequest.Group.Institute);
+            
+            var group = await _groupService.GetGroupById(registerRequest.Group.Id);
+            
 
             var result = await _authenticationService.RegisterStudentAsync(
                 registerRequest.Email, 
                 registerRequest.Password, 
                 registerRequest.FirstName, 
                 registerRequest.LastName, 
-                registerRequest.Patronymic,
-                group.group
-
+                registerRequest.Patronymic
                 );
             if (result.Succeeded)
             {
@@ -73,14 +79,15 @@ namespace UniversitiScheduleApi.Controllers
         [HttpPost("Register/Teacher")]
         public async Task<IActionResult> RegisterTeacher([FromBody] RegisterTeacherRequest registerTeacherRequest)
         {
-            var institute = Institute.Create(registerTeacherRequest.Institute.Id,registerTeacherRequest.Institute.Name); 
+            var institute = await _instituteService.GetInstituteById(registerTeacherRequest.Institute.Id);
+            //var institute = await instituteRequest;
+
             var result = await _authenticationService.RegisterTeacherAsync(
                 registerTeacherRequest.Email, 
                 registerTeacherRequest.Password,
                 registerTeacherRequest.FirstName,
                 registerTeacherRequest.LastName,
-                registerTeacherRequest.Patronymic,
-                institute.institute
+                registerTeacherRequest.Patronymic
                 );
             if (result.Succeeded)
             {

@@ -30,10 +30,11 @@ namespace UNISchedule.DataAccess.Repositories
             var teacherProfiles = teacherProfileEntities
                 .Select(t =>
                 {
+                    var Id = t.Id;
                     var applicationUserId = t.ApplicationUser.Id;
                     var details = UserDetails.Create(t.ApplicationUser.Id, t.ApplicationUser.UserName, t.ApplicationUser.FirstName, t.ApplicationUser.LastName, t.ApplicationUser.Patronymic).userDatails;
                     var institute = Institute.Create(t.Institute.Id, t.Institute.Name).institute;
-                    return TeacherProfile.Create(applicationUserId, institute, details).teacher;
+                    return TeacherProfile.Create(Id,applicationUserId, institute, details).teacher;
                 })
                 .ToList();
             return teacherProfiles;

@@ -1,0 +1,312 @@
+﻿@page
+@model UniversitySchedule.UI.Pages.Admin.TeacherProfile.IndexModel
+
+@{
+    ViewData["Title"] = "Управління профілями викладачів";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<hr />
+
+@* Обробка повідомлень про успіх/помилки *@
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @Model.Message
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @Model.ErrorMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+---
+
+## Пошук профілів викладачів
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h2>Пошук профілів викладачів</h2>
+    </div>
+    <div class="card-body">
+        <form method="post" asp-page-handler="Search">
+            <div class="row g-3">
+                <div class="col-md-5">
+                    <label asp-for="SearchTeacherId" class="form-label">Пошук за ID викладача:</label>
+                    <input asp-for="SearchTeacherId" class="form-control" placeholder="Введіть ID (GUID)" />
+                </div>
+                <div class="col-md-5">
+                    <label asp-for="SearchTeacherName" class="form-label">Пошук за ім'ям (ПІБ/UserName):</label>
+                    <input asp-for="SearchTeacherName" class="form-control" placeholder="Введіть ім'я або UserName" />
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">Пошук</button>
+                </div>
+            </div>
+            <div class="mt-3">
+                <a asp-page="./Index" class="btn btn-secondary">Скинути пошук</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+---
+
+## Створити новий профіль викладача
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h2>Створити новий профіль викладача</h2>
+    </div>
+    <div class="card-body">
+        <form method="post" asp-page-handler="Create">
+            <div class="mb-3">
+                <label asp-for="InputTeacherProfile.UserName" class="form-label"></label>
+                <input asp-for="InputTeacherProfile.UserName" class="form-control" placeholder="UserName" />
+                <span asp-validation-for="InputTeacherProfile.UserName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="InputTeacherProfile.FirstName" class="form-label"></label>
+                <input asp-for="InputTeacherProfile.FirstName" class="form-control" placeholder="Ім'я" />
+                <span asp-validation-for="InputTeacherProfile.FirstName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="InputTeacherProfile.LastName" class="form-label"></label>
+                <input asp-for="InputTeacherProfile.LastName" class="form-control" placeholder="Прізвище" />
+                <span asp-validation-for="InputTeacherProfile.LastName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="InputTeacherProfile.MiddleName" class="form-label"></label>
+                <input asp-for="InputTeacherProfile.MiddleName" class="form-control" placeholder="По батькові (не обов'язково)" />
+                <span asp-validation-for="InputTeacherProfile.MiddleName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="InputTeacherProfile.Institute.Id" class="form-label">Інститут:</label>
+                <select asp-for="InputTeacherProfile.Institute.Id" class="form-select">
+                    <option value="">-- Оберіть інститут --</option>
+                    @foreach (var institute in Model.Institutes)
+                    {
+                        <option value="@institute.Id">@institute.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="InputTeacherProfile.Institute.Id" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-success">Створити профіль</button>
+        </form>
+    </div>
+</div>
+
+---
+
+## Результат пошуку (якщо знайдено один профіль)
+
+@if (Model.SingleTeacherProfile != null)
+{
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <h2>Результат пошуку за ID/Ім'ям</h2>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">ID:</dt>
+                <dd class="col-sm-9">@Model.SingleTeacherProfile.Id</dd>
+
+                <dt class="col-sm-3">UserName:</dt>
+                <dd class="col-sm-9">@Model.SingleTeacherProfile.UserName</dd>
+
+                <dt class="col-sm-3">Ім'я:</dt>
+                <dd class="col-sm-9">@Model.SingleTeacherProfile.FirstName</dd>
+
+                <dt class="col-sm-3">Прізвище:</dt>
+                <dd class="col-sm-9">@Model.SingleTeacherProfile.LastName</dd>
+
+                <dt class="col-sm-3">По батькові:</dt>
+                <dd class="col-sm-9">@(string.IsNullOrEmpty(Model.SingleTeacherProfile.MiddleName) ? "Не вказано" : Model.SingleTeacherProfile.MiddleName)</dd>
+
+                <dt class="col-sm-3">Інститут ID:</dt>
+                <dd class="col-sm-9">@Model.SingleTeacherProfile.Institute</dd>
+
+                <dt class="col-sm-3">Інститут:</dt>
+                <dd class="col-sm-9">@(Model.Institutes.FirstOrDefault(i => i.Id == Model.SingleTeacherProfile.Institute.Id)?.Name ?? "Невідомий інститут")</dd>
+            </dl>
+        </div>
+    </div>
+}
+
+---
+
+## Список профілів викладачів
+
+@if (Model.TeacherProfiles == null || !Model.TeacherProfiles.Any())
+{
+    <p>Немає профілів викладачів для відображення.</p>
+}
+else
+{
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>UserName</th>
+                <th>Ім'я</th>
+                <th>Прізвище</th>
+                <th>По батькові</th>
+                <th>Інститут</th>
+                <th>Дії</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var teacher in Model.TeacherProfiles)
+            {
+                <tr>
+                    <td>@teacher.Id</td>
+                    <td>@teacher.UserName</td>
+                    <td>@teacher.FirstName</td>
+                    <td>@teacher.LastName</td>
+                    <td>@(string.IsNullOrEmpty(teacher.MiddleName) ? "-" : teacher.MiddleName)</td>
+                    <td>@(Model.Institutes.FirstOrDefault(i => i.Id == teacher.Institute.Id)?.Name ?? "Невідомий інститут")</td>
+                    <td>
+                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editTeacherModal"
+                                data-id="@teacher.Id"
+                                data-username="@teacher.UserName"
+                                data-firstname="@teacher.FirstName"
+                                data-lastname="@teacher.LastName"
+                                data-middlename="@teacher.MiddleName"
+                                data-instituteid="@teacher.Institute">
+                            Редагувати
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal"
+                                data-id="@teacher.Id">
+                            Видалити
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+---
+
+## Модальне вікно для редагування
+
+<div class="modal fade" id="editTeacherModal" tabindex="-1" aria-labelledby="editTeacherModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editTeacherModalLabel">Редагувати профіль викладача</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" asp-page-handler="Edit">
+                <div class="modal-body">
+                    <input type="hidden" asp-for="InputTeacherProfile.Id" id="editTeacherId" />
+                    <div class="mb-3">
+                        <label asp-for="InputTeacherProfile.UserName" class="form-label">UserName:</label>
+                        <input asp-for="InputTeacherProfile.UserName" class="form-control" id="editUserName" />
+                        <span asp-validation-for="InputTeacherProfile.UserName" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="InputTeacherProfile.FirstName" class="form-label">Ім'я:</label>
+                        <input asp-for="InputTeacherProfile.FirstName" class="form-control" id="editFirstName" />
+                        <span asp-validation-for="InputTeacherProfile.FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="InputTeacherProfile.LastName" class="form-label">Прізвище:</label>
+                        <input asp-for="InputTeacherProfile.LastName" class="form-control" id="editLastName" />
+                        <span asp-validation-for="InputTeacherProfile.LastName" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="InputTeacherProfile.MiddleName" class="form-label">По батькові:</label>
+                        <input asp-for="InputTeacherProfile.MiddleName" class="form-control" id="editMiddleName" />
+                        <span asp-validation-for="InputTeacherProfile.MiddleName" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="InputTeacherProfile.Institute" class="form-label">Інститут:</label>
+                        <select asp-for="InputTeacherProfile.Institute" class="form-select" id="editInstituteId">
+                            <option value="">-- Оберіть інститут --</option>
+                            @foreach (var institute in Model.Institutes)
+                            {
+                                <option value="@institute.Id">@institute.Name</option>
+                            }
+                        </select>
+                        <span asp-validation-for="InputTeacherProfile.Institute" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                    <button type="submit" class="btn btn-primary">Зберегти зміни</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+---
+
+## Модальне вікно для підтвердження видалення
+
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmModalLabel">Підтвердження видалення</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Ви впевнені, що хочете видалити цей профіль викладача?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                <form method="post" asp-page-handler="Delete">
+                    <input type="hidden" name="id" id="deleteTeacherId" />
+                    <button type="submit" class="btn btn-danger">Видалити</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+---
+
+## Скрипти
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // JavaScript для заповнення модальних вікон
+        $(document).ready(function () {
+            // Для модального вікна редагування
+            $('#editTeacherModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Кнопка, яка викликала модальне вікно
+                var id = button.data('id');
+                var username = button.data('username');
+                var firstname = button.data('firstname');
+                var lastname = button.data('lastname');
+                var middlename = button.data('middlename');
+                var instituteid = button.data('instituteid');
+
+                var modal = $(this);
+                modal.find('#editTeacherId').val(id);
+                modal.find('#editUserName').val(username);
+                modal.find('#editFirstName').val(firstname);
+                modal.find('#editLastName').val(lastname);
+                modal.find('#editMiddleName').val(middlename);
+                modal.find('#editInstituteId').val(instituteid); // Встановлюємо вибраний інститут
+            });
+
+            // Для модального вікна видалення
+            $('#deleteConfirmModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Кнопка, яка викликала модальне вікно
+                var id = button.data('id');
+
+                var modal = $(this);
+                modal.find('#deleteTeacherId').val(id);
+            });
+        });
+    </script>
+}

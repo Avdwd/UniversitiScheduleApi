@@ -8,18 +8,19 @@ namespace UNISchedule.Core.Models
 {
     public class StudentProfile
     {
-        private StudentProfile(string applicationUserId, Group group, UserDetails userDetails)
+        private StudentProfile(string id, string applicationUserId, Group group, UserDetails userDetails)
         {
+            Id = id;
             ApplicationUserId = applicationUserId;
             Group = group;
             UserDetails = userDetails;
         }
-
+        public string Id { get; private set; }
         public UserDetails UserDetails { get; } = null!;
         public string ApplicationUserId { get; } = string.Empty;
         public Group Group { get; } = null!;
 
-        public static (StudentProfile student, string error) Create(string applicationUserId, Group group, UserDetails userDetails)
+        public static (StudentProfile student, string error) Create(string id, string applicationUserId, Group group, UserDetails userDetails)
         {
             var error = string.Empty;
             if (string.IsNullOrWhiteSpace(applicationUserId))
@@ -28,7 +29,7 @@ namespace UNISchedule.Core.Models
                 return (null, error);
             }
 
-            var student = new StudentProfile(applicationUserId, group, userDetails);
+            var student = new StudentProfile(id, applicationUserId, group, userDetails);
             return (student, error);
         }
        

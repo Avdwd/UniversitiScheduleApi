@@ -1,0 +1,163 @@
+﻿@page
+@model UniversitySchedule.UI.Pages.Admin.Subjects.IndexModel
+@{
+    ViewData["Title"] = "Керування предметами";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Керування предметами</h1>
+</div>
+
+<div class="container mt-4">
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @Model.Message
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @Model.ErrorMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <h2>Створити новий предмет</h2>
+    <form method="post" asp-page-handler="CreateSubject" class="row g-3 needs-validation" novalidate>
+        <div class="col-md-6">
+            <label asp-for="NewSubjectName" class="form-label">Назва предмета</label>
+            <input asp-for="NewSubjectName" type="text" class="form-control" required>
+            <span asp-validation-for="NewSubjectName" class="text-danger"></span>
+            <div class="invalid-feedback">
+                Будь ласка, введіть назву предмета.
+            </div>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Створити</button>
+        </div>
+    </form>
+
+    <hr class="my-4">
+
+    <h2>Список предметів</h2>
+    <form method="get" class="row mb-3">
+        <div class="col-md-4">
+            <label asp-for="SearchById" class="form-label">Пошук за ID (GUID)</label>
+            <input asp-for="SearchById" type="text" class="form-control" placeholder="Введіть GUID">
+        </div>
+        <div class="col-md-4">
+            <label asp-for="SearchByName" class="form-label">Пошук за назвою</label>
+            <input asp-for="SearchByName" type="text" class="form-control" placeholder="Введіть назву предмета">
+        </div>
+        <div class="col-md-2">
+            <label asp-for="PageNumber" class="form-label">Сторінка:</label>
+            <input asp-for="PageNumber" type="number" class="form-control" value="1" min="1">
+        </div>
+        <div class="col-md-2">
+            <label asp-for="PageSize" class="form-label">Розмір сторінки:</label>
+            <input asp-for="PageSize" type="number" class="form-control" value="10" min="1">
+        </div>
+        <div class="col-12 mt-3">
+            <button type="submit" class="btn btn-info">Завантажити/Пошук</button>
+            <a asp-page="./Index" class="btn btn-outline-secondary">Скинути пошук</a>
+        </div>
+    </form>
+
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Назва</th>
+                <th>Дії</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Subjects != null && Model.Subjects.Any())
+            {
+                @foreach (var subject in Model.Subjects)
+                {
+                    <tr>
+                        <td>@subject.Id</td>
+                        <td>@subject.Name</td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-secondary me-2"
+                                    data-bs-toggle="modal" data-bs-target="#updateSubjectModal"
+                                    onclick="populateUpdateModal('@subject.Id', '@subject.Name')">
+                                Редагувати
+                            </button>
+                            <form method="post" asp-page-handler="DeleteSubject" asp-route-DeletedSubjectId="@subject.Id" onsubmit="return confirm('Ви впевнені, що хочете видалити предмет: @subject.Name?');" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-danger">Видалити</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="3" class="text-center">@Model.Message</td></tr>
+            }
+        </tbody>
+    </table>
+
+    <hr class="my-4">
+
+    <div class="modal fade" id="updateSubjectModal" tabindex="-1" aria-labelledby="updateSubjectModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateSubjectModalLabel">Редагувати предмет</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" asp-page-handler="EditSubject" class="needs-validation" novalidate>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label asp-for="EditedSubjectId" class="form-label">ID предмета</label>
+                            <input asp-for="EditedSubjectId" type="text" class="form-control" readonly required>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="EditedSubjectName" class="form-label">Назва предмета</label>
+                            <input asp-for="EditedSubjectName" type="text" class="form-control" required>
+                            <span asp-validation-for="EditedSubjectName" class="text-danger"></span>
+                            <div class="invalid-feedback">
+                                Будь ласка, введіть назву предмета.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                        <button type="submit" class="btn btn-success">Оновити</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Функція для заповнення модального вікна оновлення
+        function populateUpdateModal(id, name) {
+            document.getElementById('EditedSubjectId').value = id;
+            document.getElementById('EditedSubjectName').value = name;
+        }
+
+        // Bootstrap валідація форм
+        (function () {
+            'use strict';
+            var forms = document.querySelectorAll('.needs-validation');
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+        })();
+    </script>
+}

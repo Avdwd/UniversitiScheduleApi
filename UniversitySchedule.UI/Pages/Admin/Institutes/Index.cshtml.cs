@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Text.Json;
 using System.Text;
 using System.Net.Http; // Додано для HttpClient
-using Microsoft.Extensions.Configuration; // Додано для IConfiguration
+using Microsoft.Extensions.Configuration;
+using UniversitySchedule.UI.Models; // Додано для IConfiguration
 
 namespace UniversitySchedule.UI.Pages.Admin.Institutes
 {
@@ -24,11 +25,7 @@ namespace UniversitySchedule.UI.Pages.Admin.Institutes
 
         // DTO (Data Transfer Object) для представлення Інституту, як він приходить/відправляється в API
         // Це має відповідати InstituteResponse/InstituteRequest з вашого API-проекту
-        public class InstituteDto
-        {
-            public Guid Id { get; set; }
-            public string Name { get; set; }
-        }
+        
 
         // Властивість для нового інституту (для створення)
         [BindProperty] // SupportsGet = true не потрібен, якщо використовується тільки для Post

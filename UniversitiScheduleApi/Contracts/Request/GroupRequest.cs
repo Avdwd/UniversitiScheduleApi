@@ -1,9 +1,9 @@
-﻿using UNISchedule.Core.Models;
+﻿using UniversitiScheduleApi.Contracts.Request.RefRequests;
 
 namespace UniversitiScheduleApi.Contracts.Request
 {
     public record GroupRequest(
         string Name,
-        Institute Institute
+        InstituteRefRequest Institute
     );
 }

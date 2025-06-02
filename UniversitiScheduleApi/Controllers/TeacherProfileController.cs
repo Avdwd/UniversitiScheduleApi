@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using UniSchedule.Core.Interfaces.ServiceInterfaces;
 using UNISchedule.Core.Models;
 using UNISchedule.DataAccess.Entities.Identity;
@@ -12,9 +13,13 @@ namespace UniversitiScheduleApi.Controllers
     public class TeacherProfileController : ControllerBase
     {
         public readonly ITeacherProfileService _teacherProfileService;
-        public TeacherProfileController(ITeacherProfileService teacherProfileService)
+        public readonly IInstituteService _instituteService;
+        private readonly UserManager<ApplicationUser> _userManager;
+        public TeacherProfileController(ITeacherProfileService teacherProfileService, IInstituteService instituteService, UserManager<ApplicationUser> userManager)
         {
             _teacherProfileService = teacherProfileService;
+            _instituteService = instituteService;
+            _userManager = userManager;
         }
         // GET: /TeacherProfile/{teacherId}
         [HttpGet("{teacherId}")]
@@ -41,7 +46,7 @@ namespace UniversitiScheduleApi.Controllers
             var teacherProfiles = await _teacherProfileService.GetAllTeacherProfiles();
             if (teacherProfiles == null || !teacherProfiles.Any())
             {
-                return NotFound();
+                return Ok(new List<TeacherProfileResponse>());
             }
             var teacherProfileResponses = teacherProfiles.Select(tp => new TeacherProfileResponse(
                 tp.ApplicationUserId,
@@ -60,11 +65,42 @@ namespace UniversitiScheduleApi.Controllers
             {
                 return BadRequest("Invalid teacher profile data.");
             }
-            var applicationUserId = new ApplicationUser();
+            var institute = await _instituteService.GetInstituteById(teacherProfile.Institute.Id);
+
+            ApplicationUser userToLink;
+            var existingUser = await _userManager.FindByNameAsync(teacherProfile.UserName);
+            if (existingUser == null)
+            {
+                // Якщо користувача не існує, створюємо нового користувача Identity
+                var newUser = new ApplicationUser
+                {
+                    UserName = teacherProfile.UserName,
+                    Email = teacherProfile.UserName + "@university.com" // Можливо, вам потрібно додати поле Email до TeacherProfileRequest
+                };
+
+                // !!! ВАЖЛИВО: Для реального використання пароль не має бути фіксованим рядком!
+                // Він має надходити з запиту клієнта або генеруватися безпечним способом.
+                // Наприклад, ви можете додати поле "Password" до TeacherProfileRequest.
+                var createResult = await _userManager.CreateAsync(newUser, "SecureP@ssword123!"); // ЗМІНІТЬ ЦЕ!
+
+                if (!createResult.Succeeded)
+                {
+                    // Повертаємо помилки, якщо створення користувача Identity не вдалося
+                    return BadRequest($"Failed to create Identity user: {string.Join(", ", createResult.Errors.Select(e => e.Description))}");
+                }
+                userToLink = newUser; // Використовуємо щойно створеного користувача
+            }
+            else
+            {
+                userToLink = existingUser; // Використовуємо існуючого користувача
+            }
+            var newTeacherProfileId = Guid.NewGuid().ToString();
+
             var (teacher, error) = TeacherProfile.Create(
-                applicationUserId.Id,
-                teacherProfile.Institute,
-                UserDetails.Create(applicationUserId.Id, teacherProfile.UserName, teacherProfile.LastName, teacherProfile.FirstName, teacherProfile.MiddleName).userDatails
+                newTeacherProfileId,      // ID для TeacherProfile
+                userToLink.Id,            // ID пов'язаного ApplicationUser (з БД)
+                institute,
+               UserDetails.Create(userToLink.Id, teacherProfile.UserName, teacherProfile.LastName, teacherProfile.FirstName, teacherProfile.MiddleName).userDatails
             );
             var teacherProfileId = await _teacherProfileService.CreateTeacherProfile(teacher);
             if (!string.IsNullOrEmpty(error))
@@ -109,7 +145,7 @@ namespace UniversitiScheduleApi.Controllers
             var teacherProfiles = await _teacherProfileService.GetTeacherProfilesByInstitute(instituteId);
             if (teacherProfiles == null || !teacherProfiles.Any())
             {
-                return NotFound();
+                return Ok(new List<TeacherProfileResponse>());
             }
             var teacherProfileResponses = teacherProfiles.Select(tp => new TeacherProfileResponse(
                 tp.ApplicationUserId,
@@ -144,6 +180,7 @@ namespace UniversitiScheduleApi.Controllers
             );
             return Ok(teacherProfileResponse);
         }
+
         // GET: /TeacherProfiles/Page/{pageNumber}/{pageSize}
         [HttpGet("Page/{pageNumber}/{pageSize}")]
         public async Task<ActionResult<IEnumerable<TeacherProfileResponse>>> GetTeacherProfiles(int pageNumber, int pageSize)
@@ -160,7 +197,7 @@ namespace UniversitiScheduleApi.Controllers
             var teacherProfiles = await _teacherProfileService.GetTeacherProfiles(pageNumber, pageSize);
             if (teacherProfiles == null || !teacherProfiles.Any())
             {
-                return NotFound();
+                return Ok(new List<TeacherProfileResponse>());
             }
             var teacherProfileResponses = teacherProfiles.Select(tp => new TeacherProfileResponse(
                 tp.ApplicationUserId,

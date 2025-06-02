@@ -28,10 +28,11 @@ namespace UniversitiScheduleApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Guid>> CreateGroup([FromBody] GroupRequest groupRequest)
         {
+            var institute = await _instituteService.GetInstituteById(groupRequest.Institute.Id);
             var (group, error) = Group.Create(
                 Guid.NewGuid(),
                 groupRequest.Name,
-                groupRequest.Institute);
+                institute);
             if (!string.IsNullOrEmpty(error))
             {
                 return BadRequest(error);
@@ -39,6 +40,7 @@ namespace UniversitiScheduleApi.Controllers
             var groupId = await _groupService.CreateGroup(group);
             return Ok(groupId);
         }
+
         [HttpPut("{id:guid}")]
         public async Task<ActionResult<Guid>> UpdateGroup(Guid id, [FromBody] GroupRequest groupRequest)
         {
@@ -64,6 +66,7 @@ namespace UniversitiScheduleApi.Controllers
             var groupResponse = new GroupResponse(group.Id, group.Name, group.Institute);
             return Ok(groupResponse);
         }
+
         [HttpGet("name/{name}")]
         public async Task<ActionResult<GroupResponse>> GetGroupByName(string name)
         {
@@ -87,6 +90,7 @@ namespace UniversitiScheduleApi.Controllers
             var groupResponses = groups.Select(g => new GroupResponse(g.Id, g.Name, g.Institute));
             return Ok(groupResponses);
         }
+
         [HttpGet("pagination")]
         public async Task<ActionResult<List<GroupResponse>>> GetGroups(int pageNumber, int pageSize)
         {

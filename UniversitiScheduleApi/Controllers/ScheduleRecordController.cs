@@ -11,9 +11,13 @@ namespace UniversitiScheduleApi.Controllers
     public class ScheduleRecordController: ControllerBase
     {
         public readonly IScheduleRecordService _scheduleRecordService;
-        public ScheduleRecordController(IScheduleRecordService scheduleRecordService)
+        public readonly IClassTimeService _classTimeService;
+        public readonly IClassroomService _classroomService;
+        public ScheduleRecordController(IScheduleRecordService scheduleRecordService, IClassTimeService classTimeService, IClassroomService classroomService)
         {
             _scheduleRecordService = scheduleRecordService;
+            _classTimeService = classTimeService;
+            _classroomService = classroomService;
         }
         // GET: /ScheduleRecord
         [HttpGet]
@@ -27,12 +31,19 @@ namespace UniversitiScheduleApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Guid>> CreateScheduleRecord([FromBody] ScheduleRecordRequest scheduleRecordRequest)
         {
+            var classTime = await _classTimeService.GetClassTimeById(scheduleRecordRequest.ClassTime.Id);
+            var classroom = await _classroomService.GetClassroomById(scheduleRecordRequest.Classroom.Id);
+            if (classTime == null || classroom == null)
+            {
+                return BadRequest("Invalid ClassTime or Classroom ID.");
+            }
+
             var (scheduleRecord, error) = ScheduleRecord.Create(
                 Guid.NewGuid(),
                 scheduleRecordRequest.Date,
                 scheduleRecordRequest.AdditionalData,
-                scheduleRecordRequest.ClassTime,
-                scheduleRecordRequest.Classroom
+                classTime,
+                classroom
                 );
             if (!string.IsNullOrEmpty(error))
             {

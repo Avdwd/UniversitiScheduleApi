@@ -10,6 +10,7 @@ namespace UNISchedule.DataAccess.Entities
 {
     public class StudentProfileEntity
     {
+        public string Id { get; set; }
         public string ApplicationUserId { get; set; }
         public ApplicationUser ApplicationUser { get; set; }
         public Guid GroupId { get; set; }

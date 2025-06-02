@@ -1,4 +1,5 @@
 ﻿using UNISchedule.Core.Models;
+using UniversitiScheduleApi.Contracts.Request.RefRequests;
 
 namespace UniversitiScheduleApi.Contracts.Request
 {

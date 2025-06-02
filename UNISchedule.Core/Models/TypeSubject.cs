@@ -17,16 +17,21 @@ namespace UNISchedule.Core.Models
 
         public static (TypeSubject typeSubject, string error) Create(Guid id, string type)
         {
-            var error = string.Empty;
-
-            if (string.IsNullOrEmpty(type) || type.Length > MAX_TYPE_LENGTH)
+            // Валідація вхідних даних
+            if (string.IsNullOrWhiteSpace(type)) // Використовуйте String.IsNullOrWhiteSpace для обробки пробілів
             {
-                error = "Type cannot be empty";
+                return (null, "Type cannot be empty or consist only of whitespace."); // Повертаємо null і помилку
             }
 
+            if (type.Length > MAX_TYPE_LENGTH)
+            {
+                return (null, $"Type cannot exceed {MAX_TYPE_LENGTH} characters."); // Повертаємо null і помилку
+            }
+
+            // Якщо валідація пройшла успішно, створюємо об'єкт
             var typeSubject = new TypeSubject(id, type);
 
-            return (typeSubject, error);
+            return (typeSubject, string.Empty);
 
         }
 

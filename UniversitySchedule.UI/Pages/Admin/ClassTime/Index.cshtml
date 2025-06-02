@@ -1,0 +1,155 @@
+﻿@page
+@model UniversitySchedule.UI.Pages.Admin.ClassTimes.IndexModel
+@{
+    ViewData["Title"] = "Керування часом занять";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Керування часом занять</h1>
+</div>
+
+<div class="container mt-4">
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @Model.Message
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @Model.ErrorMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <h2>Створити новий час заняття</h2>
+    <form method="post" asp-page-handler="CreateClassTime" class="row g-3 needs-validation" novalidate>
+        <div class="col-md-4">
+            <label asp-for="NewClassTimeframe" class="form-label">Часовий проміжок (ГГ:ХХ - ГГ:ХХ)</label>
+            <input asp-for="NewClassTimeframe" type="text" class="form-control" placeholder="Наприклад, 08:00 - 09:30" required pattern="^([0-1]?[0-9]|2[0-3]):[0-5][0-9]\s*-\s*([0-1]?[0-9]|2[0-3]):[0-5][0-9]$">
+            <span asp-validation-for="NewClassTimeframe" class="text-danger"></span>
+            <div class="invalid-feedback">
+                Будь ласка, введіть час у форматі ГГ:ХХ - ГГ:ХХ (наприклад, 08:00 - 09:30).
+            </div>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Створити</button>
+        </div>
+    </form>
+
+    <hr class="my-4">
+
+    <h2>Список часу занять</h2>
+    <form method="get" class="row mb-3">
+        <div class="col-md-3">
+            <label asp-for="SearchById" class="form-label">Пошук за ID (GUID)</label>
+            <input asp-for="SearchById" type="text" class="form-control" placeholder="Введіть GUID">
+        </div>
+        <div class="col-md-3">
+            <label asp-for="SearchByTimeframe" class="form-label">Пошук за часовим проміжком (ГГ:ХХ - ГГ:ХХ)</label>
+            <input asp-for="SearchByTimeframe" type="text" class="form-control" placeholder="Наприклад, 08:00 - 09:30">
+        </div>
+        <div class="col-12 mt-3">
+            <button type="submit" class="btn btn-info">Завантажити/Пошук</button>
+            <a asp-page="./Index" class="btn btn-outline-secondary">Скинути пошук</a>
+        </div>
+    </form>
+
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Часовий проміжок</th>
+                <th>Дії</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.ClassTimes != null && Model.ClassTimes.Any())
+            {
+                @foreach (var classTime in Model.ClassTimes)
+                {
+                    <tr>
+                        <td>@classTime.Id</td>
+                        <td>@classTime.Timeframe</td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-secondary me-2"
+                                    data-bs-toggle="modal" data-bs-target="#updateClassTimeModal"
+                                    onclick="populateUpdateModal('@classTime.Id', '@classTime.Timeframe')">
+                                Редагувати
+                            </button>
+                            <form method="post" asp-page-handler="DeleteClassTime" asp-route-DeletedClassTimeId="@classTime.Id" onsubmit="return confirm('Ви впевнені, що хочете видалити цей час заняття з ID: @classTime.Id?');" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-danger">Видалити</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="3" class="text-center">@Model.Message</td></tr>
+            }
+        </tbody>
+    </table>
+
+    <hr class="my-4">
+
+    <div class="modal fade" id="updateClassTimeModal" tabindex="-1" aria-labelledby="updateClassTimeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateClassTimeModalLabel">Редагувати час заняття</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" asp-page-handler="EditClassTime" class="needs-validation" novalidate>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label asp-for="EditedClassTimeId" class="form-label">ID часу заняття</label>
+                            <input asp-for="EditedClassTimeId" type="text" class="form-control" readonly required>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="EditedClassTimeframe" class="form-label">Часовий проміжок (ГГ:ХХ - ГГ:ХХ)</label>
+                            <input asp-for="EditedClassTimeframe" type="text" class="form-control" placeholder="Наприклад, 08:00 - 09:30" required pattern="^([0-1]?[0-9]|2[0-3]):[0-5][0-9]\s*-\s*([0-1]?[0-9]|2[0-3]):[0-5][0-9]$">
+                            <span asp-validation-for="EditedClassTimeframe" class="text-danger"></span>
+                            <div class="invalid-feedback">
+                                Будь ласка, введіть час у форматі ГГ:ХХ - ГГ:ХХ (наприклад, 08:00 - 09:30).
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                        <button type="submit" class="btn btn-success">Оновити</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Функція для заповнення модального вікна оновлення
+        function populateUpdateModal(id, timeframe) {
+            document.getElementById('EditedClassTimeId').value = id;
+            document.getElementById('EditedClassTimeframe').value = timeframe;
+        }
+
+        // Bootstrap валідація форм
+        (function () {
+            'use strict';
+            var forms = document.querySelectorAll('.needs-validation');
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+        })();
+    </script>
+}

@@ -1,0 +1,161 @@
+﻿@page
+@model UniversitySchedule.UI.Pages.Admin.Groups.IndexModel
+@{
+    ViewData["Title"] = "Управління Групами";
+}
+
+<h1>Управління Групами</h1>
+
+@* Повідомлення про успіх/помилку *@
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <div class="alert alert-success" role="alert">
+        @Model.Message
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        @Model.ErrorMessage
+    </div>
+}
+
+@* Форма для створення нової групи *@
+<div class="card mt-4 mb-4">
+    <div class="card-header">
+        <h3>Додати нову групу</h3>
+    </div>
+    <div class="card-body">
+        <form method="post" asp-page-handler="CreateGroup">
+            <div class="form-group">
+                <label asp-for="NewGroupName"></label>
+                <input asp-for="NewGroupName" class="form-control" placeholder="Введіть назву групи" />
+                <span asp-validation-for="NewGroupName" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-3">
+                <label asp-for="NewGroupInstituteId">Інститут</label>
+                <select asp-for="NewGroupInstituteId" asp-items="Model.InstitutesSelectList" class="form-control">
+                    <option value="">-- Оберіть інститут --</option>
+                </select>
+                <span asp-validation-for="NewGroupInstituteId" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Додати групу</button>
+        </form>
+    </div>
+</div>
+
+<hr />
+
+@* Таблиця для відображення груп *@
+<h2 class="mt-4">Існуючі групи</h2>
+
+@if (Model.Groups != null && Model.Groups.Any())
+{
+    <table class="table table-bordered table-striped mt-3">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Назва Групи</th>
+                <th>Інститут</th>
+                <th>Дії</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var group in Model.Groups)
+            {
+                <tr>
+                    <td>@group.Id</td>
+                    <td>@group.Name</td>
+                    <td>@(group.Institute?.Name ?? "N/A")</td> @* Безпечний доступ до імені інституту *@
+                    <td>
+                        <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#editGroupModal"
+                                onclick="populateEditModal('@group.Id', '@group.Name', '@group.Institute?.Id')">
+                            Редагувати
+                        </button>
+                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteGroupModal"
+                                onclick="populateDeleteModal('@group.Id')">
+                            Видалити
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Наразі групи відсутні або виникла помилка під час завантаження.</p>
+}
+
+@* Modal для редагування *@
+<div class="modal fade" id="editGroupModal" tabindex="-1" aria-labelledby="editGroupModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-page-handler="EditGroup">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editGroupModalLabel">Редагувати групу</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" asp-for="EditedGroupId" id="editedGroupId" />
+                    <div class="form-group">
+                        <label asp-for="EditedGroupName"></label>
+                        <input asp-for="EditedGroupName" class="form-control" id="editedGroupName" />
+                        <span asp-validation-for="EditedGroupName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label asp-for="EditedGroupInstituteId">Інститут</label>
+                        <select asp-for="EditedGroupInstituteId" asp-items="Model.InstitutesSelectList" class="form-control" id="editedGroupInstituteId">
+                        </select>
+                        <span asp-validation-for="EditedGroupInstituteId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Відмінити</button>
+                    <button type="submit" class="btn btn-primary">Зберегти зміни</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@* Modal для видалення *@
+<div class="modal fade" id="deleteGroupModal" tabindex="-1" aria-labelledby="deleteGroupModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-page-handler="DeleteGroup">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteGroupModalLabel">Видалити групу</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Ви впевнені, що хочете видалити групу з ID: <strong id="deleteGroupIdDisplay"></strong>?</p>
+                    <input type="hidden" asp-for="DeletedGroupId" id="deletedGroupId" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Відмінити</button>
+                    <button type="submit" class="btn btn-danger">Видалити</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function populateEditModal(id, name, instituteId) {
+            document.getElementById('editedGroupId').value = id;
+            document.getElementById('editedGroupName').value = name;
+            document.getElementById('editedGroupInstituteId').value = instituteId; // Вибір правильного інституту
+        }
+
+        function populateDeleteModal(id) {
+            document.getElementById('deletedGroupId').value = id;
+            document.getElementById('deleteGroupIdDisplay').textContent = id;
+        }
+    </script>
+}

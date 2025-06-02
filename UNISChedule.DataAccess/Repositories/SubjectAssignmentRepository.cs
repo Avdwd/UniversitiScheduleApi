@@ -78,6 +78,7 @@ namespace UNISchedule.DataAccess.Repositories
                     s.TeacherProfileEntity.Institute.Name).institute;
 
                 var teacher = TeacherProfile.Create(
+                    s.TeacherProfileEntity.Id,
                     s.TeacherProfileEntity.ApplicationUserId,
                     teacherInstitute,
                     userDetails).teacher;
